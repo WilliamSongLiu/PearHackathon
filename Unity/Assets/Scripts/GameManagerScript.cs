@@ -2,12 +2,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[RequireComponent(typeof(AudioSource))]
 public class GameManagerScript : MonoBehaviour
 {
+	AudioSource audioSource;
+
 	[SerializeField] Image backgroundImage;
     [SerializeField] TMP_Text bottomText;
     [SerializeField] GameObject loadingPanel;
 	[SerializeField] TMP_Text loadingText;
+
+	private void Awake()
+	{
+		audioSource = GetComponent<AudioSource>();
+	}
 
 	private void Start()
     {
