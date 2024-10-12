@@ -24,12 +24,6 @@ const openai = new OpenAI({
   apiKey: apiKeys.openai
 });
 
-app.get('/', (req, res) => {
-  res.json({
-    test: 'Hello, World!'
-  });
-});
-
 app.get('/image', (req, res) => {
   console.log(`image ${req.query.file}`);
 
