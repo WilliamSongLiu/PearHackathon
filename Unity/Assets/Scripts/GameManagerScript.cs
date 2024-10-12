@@ -48,7 +48,7 @@ public class GameManagerScript : MonoBehaviour
 	class GenerateSceneResponse
 	{
 		public bool success;
-		public Sprite backgroundSprite;
+		public string backgroundImageFile;
 	}
 	void GenerateSceneReceived(string response)
 	{
@@ -59,7 +59,13 @@ public class GameManagerScript : MonoBehaviour
 			return;
 		}
 
-		backgroundImage.sprite = json.backgroundSprite;
+		loadingText.text = "Loading...";
+
+		StartCoroutine(NetworkManagerScript.Instance.RequestImage(json.backgroundImageFile, BackgroundImageReceived));
+	}
+	void BackgroundImageReceived(Sprite sprite)
+	{
+		backgroundImage.sprite = sprite;
 
 		loadingPanel.SetActive(false);
 	}

@@ -38,9 +38,9 @@ public class NetworkManagerScript : MonoBehaviour
 		callback(json);
 	}
 
-	public IEnumerator RequestImage(string fileName, Action<Sprite> callback)
+	public IEnumerator RequestImage(string file, Action<Sprite> callback)
 	{
-		string requestUrl = $"{imageBaseUrl}{fileName}";
+		string requestUrl = $"{imageBaseUrl}/{file}";
 		UnityWebRequest request = UnityWebRequestTexture.GetTexture(requestUrl);
 		yield return request.SendWebRequest();
 
