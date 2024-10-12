@@ -127,15 +127,15 @@ public class GameManagerScript : MonoBehaviour
 	{
 		if (state == State.PlayingJustStarted)
 		{
-			speakerText.text = act.dialogues[currentDialogueIndex].speaker;
-			lineText.text = "";
-
 			loadingPanel.SetActive(false);
 
 			state = State.PlayingAnimating;
 			currentDialogueIndex = 0;
 			currentDialogueCharacterIndex = 0;
 			lastTextUpdate = 0f;
+
+			speakerText.text = act.dialogues[currentDialogueIndex].speaker;
+			lineText.text = "";
 
 			GenerateVoice(act.dialogues[currentDialogueIndex].line);
 		}
@@ -180,5 +180,33 @@ public class GameManagerScript : MonoBehaviour
 	{
 		audioSource.Stop();
 		audioSource.PlayOneShot(audioClip);
+	}
+
+	public void ClickInterceptorClicked()
+	{
+		if (state == State.PlayingAnimating)
+		{
+			state = State.PlayingDoneAnimating;
+			lineText.text = act.dialogues[currentDialogueIndex].line;
+
+			audioSource.Stop();
+		}
+		else if (state == State.PlayingDoneAnimating)
+		{
+			currentDialogueIndex++;
+			if (currentDialogueIndex >= act.dialogues.Count)
+			{
+				return;
+			}
+
+			state = State.PlayingAnimating;
+			currentDialogueCharacterIndex = 0;
+			lastTextUpdate = 0f;
+
+			speakerText.text = act.dialogues[currentDialogueIndex].speaker;
+			lineText.text = "";
+
+			GenerateVoice(act.dialogues[currentDialogueIndex].line);
+		}
 	}
 }
