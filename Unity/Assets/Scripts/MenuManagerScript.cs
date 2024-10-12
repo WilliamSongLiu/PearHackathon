@@ -5,6 +5,6 @@ public class MenuManagerScript : MonoBehaviour
 {
     public void Play()
     {
-        SceneManager.LoadScene("Choices");
+        SceneManager.LoadScene("Setup");
     }
 }

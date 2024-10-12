@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class ChiocesManagerScript : MonoBehaviour
+public class SetupManagerScript : MonoBehaviour
 {
     [SerializeField] TMP_Text questionText;
     [SerializeField] TMP_InputField answerInputField;
