@@ -1,20 +1,29 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class NetworkManagerScript : MonoBehaviour
 {
-	string url = "http://localhost:3000/";
-
-	private void Start()
+	public static NetworkManagerScript Instance { get; private set; }
+	private void Awake()
 	{
-		StartCoroutine(SendRequest(""));
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
 	}
 
-	IEnumerator SendRequest(string query)
+	string baseUrl = "http://localhost:3000";
+
+	public IEnumerator SendRequest(string query, Action<string> callback)
 	{
-		using (UnityWebRequest webRequest = UnityWebRequest.Get($"{url}{query}"))
+		string requestUrl = $"{baseUrl}{query}";
+		using (UnityWebRequest webRequest = UnityWebRequest.Get(requestUrl))
 		{
 			yield return webRequest.SendWebRequest();
 
@@ -27,17 +36,7 @@ public class NetworkManagerScript : MonoBehaviour
 			{
 				string jsonResponse = webRequest.downloadHandler.text;
 				Debug.Log("Response: " + jsonResponse);
-
-				MyData data = JsonUtility.FromJson<MyData>(jsonResponse);
-
-				Debug.Log("Parsed Data: " + data.test);
 			}
 		}
-	}
-
-	[System.Serializable]
-	public class MyData
-	{
-		public string test;
 	}
 }
