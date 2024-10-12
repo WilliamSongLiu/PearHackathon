@@ -2,10 +2,9 @@ import express from 'express';
 import OpenAI from 'openai';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { setup_plot_system_prompt } from './prompts.js';
+import { generate_scene_system_prompt, setup_plot_system_prompt } from './prompts.js';
 import { storySchema } from './types.js';
 import { zodResponseFormat } from "openai/helpers/zod";
-// import { z } from "zod";
 
 const GPT_4o = 'gpt-4o';
 const DALL_E = 'dall-e-3';
@@ -13,6 +12,10 @@ const DALL_E = 'dall-e-3';
 const app = express();
 const PORT = 3000;
 app.use(express.json());
+
+let scenes = [];
+let choices = [];
+let descriptions = {};
 
 import apiKeys from './apiKeys.json' assert { type: 'json' };
 const openai = new OpenAI({
@@ -26,44 +29,65 @@ app.get('/image', (req, res) => {
 
 app.get('/start-story', async (req, res) => {
   try {
-    const completion = await generateStorySetup(req.params.prompt);
-    // messages = [{ role: 'system', content: prompt }]
+    const completion = await generateStorySetup(req.params.prompt ?? "mystery");
+    console.log("completion\n", completion);
 
-    // const completion = await openai.chat.completions.create({
-    //   model: model,
-    //   messages: messages,
-    // });
+    for (const character in completion.sideCharacters) {
+      console.log(character);
+      descriptions[character["name"]] = generatePhysicalDescription(character["description"]);
+    }
 
-    // physical_appearance =
-    // return completion.choices[0].message.content; // Access the first completion choice
-    console.log(completion);
+    console.log(completion["mainCharacter"]);
+    descriptions[completion["mainCharacter"]["name"]] = generatePhysicalDescription(character["description"]);
+
+    await Promise.all(descriptions);
+    console.log(descriptions)
+
     res.send(completion);
     return completion;
   } catch (error) {
     console.error('Error generating completion:', error);
     throw error;
   }
-  // setup
-
-
-
 });
 
-const generateStorySetup = async (prompt) => {
+const generateStorySetup = async (genre) => {
   try {
-    const prompt = `Generate a plot for a 5 minute mystery visual novel`
+    const prompt = `Generate a plot for a 5 minute ${genre} visual novel`
 
     const messages = [
       { role: 'system', content: setup_plot_system_prompt },
       { role: 'user', content: prompt }
     ]
 
-    console.log(messages)
+    // console.log(messages)
+
+    const completion = await openai.beta.chat.completions.parse({
+      model: GPT_4o,
+      messages: messages,
+      response_format: zodResponseFormat(storySchema, "story_setup"),
+    });
+
+    // console.log(completion)
+    const return_value = completion.choices[0].message.parsed;
+    // console.log(return_value);
+    return return_value;
+  } catch (error) {
+    console.error('Error generating completion:', error);
+    throw error;
+  }
+}
+
+const generatePhysicalDescription = async (description) => {
+  try {
+    const messages = [
+      { role: 'system', content: physical_description_system_prompt },
+      { role: 'user', content: description }
+    ]
 
     const completion = await openai.chat.completions.create({
       model: GPT_4o,
       messages: messages,
-      response_format: zodResponseFormat(storySchema, "story_setup"),
     });
 
     return completion.choices[0].message.content;
@@ -73,14 +97,13 @@ const generateStorySetup = async (prompt) => {
   }
 }
 
-const generatePhysicalDescription = async (prompt) => {
+const generateScene = async (prompt) => {
   try {
-    const completion = await openai.chat.completions.create({
-      model: GPT_4o,
-      messages: messages,
-      response_format: zodResponseFormat(storySchema, "story_setup"),
-    });
-
+    const messages = [
+      { role: 'system', content: generate_scene_system_prompt },
+      { role: 'user', content: prompt }
+    ]
+    
     // const completion = await generateCompletion(DALL_E, [
     //   { role: 'system', content: prompt },
     // ]);
