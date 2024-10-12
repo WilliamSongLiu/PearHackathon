@@ -23,11 +23,19 @@ export const storySchema = z.object({
 });
 
 
-export const sceneSchema = z.object({
-    characters: z.array(z.string()).nonempty(),  // List of characters, non-empty array of strings
-    setting: z.string().min(1),  // Detailed description of the scene's setting, non-empty string
+export const actSchema = z.object({
+    characters: z.array(z.string()),
+    // .nonempty(),  // List of characters, non-empty array of strings
+    setting: z.string(),  // Detailed description of the scene's setting, non-empty string
     dialogue: z.array(z.object({
-      speaker: z.string().min(1),  // Character or narrator attribution
-      line: z.string().min(1)  // Dialogue line
-    })).nonempty()  // Non-empty array of dialogue objects
+      speaker: z.string(),  // Character or narrator attribution
+      line: z.string()  // Dialogue line
+    })),
+    // .nonempty(),
+    decision: z.object({
+        statement: z.string().describe("Description about the decision being made"),
+        choices: z.array(z.string())    // Two concise choices in bullet point format
+        //   .length(2)
+          .describe("Two distinct choices that align with the story's progress and character development")
+    })
   });
