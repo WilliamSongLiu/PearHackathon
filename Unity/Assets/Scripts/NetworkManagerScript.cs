@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 
 public class NetworkManagerScript : MonoBehaviour
 {
@@ -31,6 +29,7 @@ public class NetworkManagerScript : MonoBehaviour
 		if (request.result != UnityWebRequest.Result.Success)
 		{
 			Debug.LogError("Request JSON error: " + request.error);
+			yield break;
 		}
 
 		string json = request.downloadHandler.text;
@@ -46,10 +45,27 @@ public class NetworkManagerScript : MonoBehaviour
 		if (request.result != UnityWebRequest.Result.Success)
 		{
 			Debug.LogError("Request image error: " + request.error);
+			yield break;
 		}
 
 		Texture2D texture = DownloadHandlerTexture.GetContent(request);
 		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
 		callback(sprite);
+	}
+
+	public IEnumerator RequestAudio(string file, Action<AudioClip> callback)
+	{
+		string requestUrl = $"{baseUrl}/audio?file={file}";
+		UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(requestUrl, AudioType.WAV);
+		yield return request.SendWebRequest();
+
+		if (request.result != UnityWebRequest.Result.Success)
+		{
+			Debug.LogError("Request audio error: " + request.error);
+			yield break;
+		}
+
+		AudioClip audioClip = DownloadHandlerAudioClip.GetContent(request);
+		callback(audioClip);
 	}
 }
