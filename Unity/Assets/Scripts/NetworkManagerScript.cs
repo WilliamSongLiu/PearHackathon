@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class NetworkManagerScript : MonoBehaviour
 {
@@ -19,24 +21,36 @@ public class NetworkManagerScript : MonoBehaviour
 	}
 
 	string baseUrl = "http://localhost:3000";
+	string imageBaseUrl = "http://localhost:3000/image";
 
-	public IEnumerator SendRequest(string query, Action<string> callback)
+	public IEnumerator RequestJSON(string query, Action<string> callback)
 	{
 		string requestUrl = $"{baseUrl}{query}";
-		using (UnityWebRequest webRequest = UnityWebRequest.Get(requestUrl))
-		{
-			yield return webRequest.SendWebRequest();
+		UnityWebRequest request = UnityWebRequest.Get(requestUrl);
+		yield return request.SendWebRequest();
 
-			if (webRequest.result == UnityWebRequest.Result.ConnectionError ||
-				webRequest.result == UnityWebRequest.Result.ProtocolError)
-			{
-				Debug.LogError("Error: " + webRequest.error);
-			}
-			else
-			{
-				string jsonResponse = webRequest.downloadHandler.text;
-				Debug.Log("Response: " + jsonResponse);
-			}
+		if (request.result != UnityWebRequest.Result.Success)
+		{
+			Debug.LogError("Request JSON error: " + request.error);
 		}
+
+		string json = request.downloadHandler.text;
+		callback(json);
+	}
+
+	public IEnumerator RequestImage(string fileName, Action<Sprite> callback)
+	{
+		string requestUrl = $"{imageBaseUrl}{fileName}";
+		UnityWebRequest request = UnityWebRequestTexture.GetTexture(requestUrl);
+		yield return request.SendWebRequest();
+
+		if (request.result != UnityWebRequest.Result.Success)
+		{
+			Debug.LogError("Request image error: " + request.error);
+		}
+
+		Texture2D texture = DownloadHandlerTexture.GetContent(request);
+		Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+		callback(sprite);
 	}
 }

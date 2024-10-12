@@ -167,8 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f182d332f20c3654ca1959c6cfd8d2d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backgroundImage: {fileID: 1308678854}
   bottomText: {fileID: 731084338}
   loadingPanel: {fileID: 2003183589}
+  loadingText: {fileID: 1370965244}
 --- !u!114 &185461948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -881,7 +883,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2003183590
 RectTransform:
   m_ObjectHideFlags: 0
