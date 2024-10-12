@@ -11,7 +11,7 @@ public class ChiocesManagerScript : MonoBehaviour
     // 0 is name, 1 is genre, 2 is custom genre
     int stage;
 
-    void Start()
+	private void Start()
     {
         stage = 0;
 

@@ -6,10 +6,12 @@ using TMPro;
 public class GameManagerScript : MonoBehaviour
 {
     [SerializeField] TMP_Text bottomText;
+    [SerializeField] GameObject loadingPanel;
 
-    void Start()
+	private void Start()
     {
-        bottomText.text = $"Your name is {DataManager.playerName} and your genre is {DataManager.genre}";
+        loadingPanel.SetActive(true);
 
+        bottomText.text = $"Your name is {DataManager.playerName} and your genre is {DataManager.genre}";
 	}
 }
