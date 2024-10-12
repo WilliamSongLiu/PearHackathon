@@ -15,9 +15,9 @@ if (!fs.existsSync(audiosFolder)){
   fs.mkdirSync(audiosFolder);
 }
 
-const app = express();
-const PORT = 3000;
-app.use(express.json());
+// const app = express();
+// const PORT = 3000;
+// app.use(express.json());
 
 import apiKeys from './apiKeys.json' assert { type: 'json' };
 const openai = new OpenAI({
@@ -36,20 +36,6 @@ app.get('/audio', (req, res) => {
   res.sendFile(path.join(audiosFolder, req.query.file));
 });
 
-app.get('/setup-story', (req, res) => {
-  res.json({
-    success: true
-  });
-});
-
-app.get('/generate-act', async (req, res) => {
-  console.log('/generate-act');
-
-  res.json({
-    success: true,
-    backgroundImageFile: await generateBackgroundImage('a black dog with a red hat in space')
-  });
-});
 
 const generateBackgroundImage = async (prompt) => {
   console.log(`generateBackgroundImage ${prompt}`);
