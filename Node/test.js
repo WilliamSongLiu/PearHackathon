@@ -79,6 +79,7 @@ const generateBackgroundImage = async (prompt) => {
     writer.on('error', reject);
   });
 
+  console.log(`generateBackgroundImage returned ${fileName}`);
   return fileName;
 }
 
@@ -98,15 +99,16 @@ const generateVoice = async (line) => {
     model: 'tts-1',
     voice: 'alloy',
     input: line,
-    response_format: 'wav'
+    response_format: 'mp3'
   });
 
-  const fileName = `${Date.now()}.wav`;
+  const fileName = `${Date.now()}.mp3`;
   const filePath = path.join(audiosFolder, fileName);
 
   const buffer = Buffer.from(await response.arrayBuffer());
   await fs.promises.writeFile(filePath, buffer);
 
+  console.log(`generateVoice returned ${fileName}`);
   return fileName;
 }
 

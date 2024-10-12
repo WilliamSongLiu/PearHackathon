@@ -57,7 +57,7 @@ public class NetworkManagerScript : MonoBehaviour
 	public IEnumerator RequestAudio(string file, Action<AudioClip> callback)
 	{
 		string requestUrl = $"{baseUrl}/audio?file={file}";
-		UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(requestUrl, AudioType.WAV);
+		UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(requestUrl, AudioType.MPEG);
 		yield return request.SendWebRequest();
 
 		if (request.result != UnityWebRequest.Result.Success)

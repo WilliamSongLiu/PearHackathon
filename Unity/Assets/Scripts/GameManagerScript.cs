@@ -46,7 +46,7 @@ public class GameManagerScript : MonoBehaviour
 	int currentDialogueIndex;
 	int currentDialogueCharacterIndex;
 
-	float textInterval = 0.1f;
+	float textInterval = 0.03f;
 	float lastTextUpdate;
 
 	private void Awake()
