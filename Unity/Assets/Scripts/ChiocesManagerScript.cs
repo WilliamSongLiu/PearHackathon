@@ -8,12 +8,17 @@ public class ChiocesManagerScript : MonoBehaviour
     [SerializeField] TMP_InputField answerInputField;
     [SerializeField] GameObject genresPanel;
 
-    // 0 is name, 1 is genre, 2 is custom genre
-    int stage;
+    enum Stage
+    {
+        Name,
+        Genre,
+        CustomGenre
+    }
+    Stage stage;
 
 	private void Start()
     {
-        stage = 0;
+        stage = Stage.Name;
 
         questionText.text = "What is your name?";
 
@@ -28,18 +33,18 @@ public class ChiocesManagerScript : MonoBehaviour
             return;
         }
 
-        if (stage == 0)
+        if (stage == Stage.Name)
         {
 			DataManager.playerName = answerInputField.text;
 
-			stage = 1;
+			stage = Stage.Genre;
 
 			questionText.text = "What genre would you like your story to be?";
 
 			answerInputField.gameObject.SetActive(false);
 			genresPanel.SetActive(true);
 		}
-        else if (stage == 2)
+        else if (stage == Stage.CustomGenre)
         {
 			DataManager.genre = answerInputField.text;
 
@@ -53,7 +58,7 @@ public class ChiocesManagerScript : MonoBehaviour
 
         if (genre == "custom")
         {
-            stage = 2;
+            stage = Stage.CustomGenre;
 
             answerInputField.text = "";
 

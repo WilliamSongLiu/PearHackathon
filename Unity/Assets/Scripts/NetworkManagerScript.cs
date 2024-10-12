@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -28,7 +29,7 @@ public class NetworkManagerScript : MonoBehaviour
 
 		if (request.result != UnityWebRequest.Result.Success)
 		{
-			Debug.LogError("Request JSON error: " + request.error);
+			Debug.LogError($"Request JSON {query} error: {request.error}");
 			yield break;
 		}
 
@@ -44,7 +45,7 @@ public class NetworkManagerScript : MonoBehaviour
 
 		if (request.result != UnityWebRequest.Result.Success)
 		{
-			Debug.LogError("Request image error: " + request.error);
+			Debug.LogError($"Request image {file} error: {request.error}");
 			yield break;
 		}
 
@@ -61,7 +62,7 @@ public class NetworkManagerScript : MonoBehaviour
 
 		if (request.result != UnityWebRequest.Result.Success)
 		{
-			Debug.LogError("Request audio error: " + request.error);
+			Debug.LogError($"Request audio {file} error: {request.error}");
 			yield break;
 		}
 

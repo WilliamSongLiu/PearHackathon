@@ -25,13 +25,13 @@ const openai = new OpenAI({
 });
 
 app.get('/image', (req, res) => {
-  console.log(`image ${req.query.file}`);
+  console.log(`/image ${req.query.file}`);
 
   res.sendFile(path.join(imagesFolder, req.query.file));
 });
 
 app.get('/audio', (req, res) => {
-  console.log(`audio ${req.query.file}`);
+  console.log(`/audio ${req.query.file}`);
 
   res.sendFile(path.join(audiosFolder, req.query.file));
 });
@@ -42,17 +42,17 @@ app.get('/setup-story', (req, res) => {
   });
 });
 
-app.get('/get-scene', async (req, res) => {
-  console.log('get-scene');
+app.get('/generate-act', async (req, res) => {
+  console.log('/generate-act');
 
   res.json({
     success: true,
-    backgroundImageFile: await generateBackgroundImage('a black dog with a red hat')
+    backgroundImageFile: await generateBackgroundImage('a black dog with a red hat in space')
   });
 });
 
 const generateBackgroundImage = async (prompt) => {
-  console.log('generateBackgroundImage');
+  console.log(`generateBackgroundImage ${prompt}`);
 
   const response = await openai.images.generate({
     model: 'dall-e-3',
@@ -82,22 +82,22 @@ const generateBackgroundImage = async (prompt) => {
   return fileName;
 }
 
-app.get('/get-voice', async (req, res) => {
-  console.log('get-voice');
+app.get('/generate-voice', async (req, res) => {
+  console.log('/generate-voice');
 
   res.json({
     success: true,
-    backgroundImageFile: await generateVoice('testasiojfdiojasidofjioa')
+    voiceAudioFile: await generateVoice(req.query.line)
   });
 });
 
-const generateVoice = async (passage) => {
-  console.log('generateVoice');
+const generateVoice = async (line) => {
+  console.log(`generateVoice ${line}`);
 
   const response = await openai.audio.speech.create({
     model: 'tts-1',
     voice: 'alloy',
-    input: passage,
+    input: line,
     response_format: 'wav'
   });
 
