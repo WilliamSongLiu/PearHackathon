@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 
 const app = express();
 const PORT = 3000;
+app.use(express.json());
 
 import apiKeys from './apiKeys.json' assert { type: 'json' };
 const openai = new OpenAI({
@@ -12,7 +13,9 @@ const openai = new OpenAI({
 let storyPrompt = "In a world where the sun was always shining"
 
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.json({
+    test: 'Hello, World!'
+  });
 });
 
 // Utility function to call OpenAI API and return the completion
