@@ -2,7 +2,7 @@ import express from 'express';
 import OpenAI from 'openai';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { generate_scene_system_prompt, setup_plot_system_prompt } from './prompts.js';
+import { generate_scene_system_prompt, setup_plot_system_prompt, physical_description_system_prompt } from './prompts.js';
 import { storySchema } from './types.js';
 import { zodResponseFormat } from "openai/helpers/zod";
 
@@ -32,16 +32,47 @@ app.get('/start-story', async (req, res) => {
     const completion = await generateStorySetup(req.params.prompt ?? "mystery");
     console.log("completion\n", completion);
 
-    for (const character in completion.sideCharacters) {
-      console.log(character);
-      descriptions[character["name"]] = generatePhysicalDescription(character["description"]);
-    }
+    console.log("completion.sideCharacters\n", completion.sideCharacters);
 
-    console.log(completion["mainCharacter"]);
-    descriptions[completion["mainCharacter"]["name"]] = generatePhysicalDescription(character["description"]);
+    const characterPromises = completion.sideCharacters.map(character => ({
+      name: character.name,
+      promise: generatePhysicalDescription(character.description)
+    }));
 
-    await Promise.all(descriptions);
-    console.log(descriptions)
+    characterPromises.push({
+      name: completion.mainCharacter.name,
+      promise: generatePhysicalDescription(completion.mainCharacter.description)
+    });
+
+    console.log(characterPromises)
+
+    // Now wait for all promises to resolve
+    Promise.all(characterPromises.map(entry => entry.promise))
+    .then(results => {
+      // Process the results along with their corresponding names
+      results.forEach((result, index) => {
+        descriptions[characterPromises[index].name] = result;
+        // console.log(`Result for ${characterPromises[index].name}:`, result);
+      });
+
+      console.log(descriptions)
+    })
+    .catch(error => {
+      console.error(error);  // Handle any error
+    });
+    // promise.app
+
+
+    // for (const character in completion.sideCharacters) {
+    //   console.log(character);
+    //   descriptions[character["name"]] = generatePhysicalDescription(character["description"]);
+    // }
+
+    // console.log(completion["mainCharacter"]);
+    // descriptions[completion["mainCharacter"]["name"]] = generatePhysicalDescription(character["description"]);
+
+    // await Promise.all(descriptions);
+    // console.log(descriptions)
 
     res.send(completion);
     return completion;
