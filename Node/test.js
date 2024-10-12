@@ -10,6 +10,10 @@ const imagesFolder = path.join(__dirname, 'images');
 if (!fs.existsSync(imagesFolder)){
   fs.mkdirSync(imagesFolder);
 }
+const audiosFolder = path.join(__dirname, 'audios');
+if (!fs.existsSync(audiosFolder)){
+  fs.mkdirSync(audiosFolder);
+}
 
 const app = express();
 const PORT = 3000;
@@ -32,14 +36,20 @@ app.get('/image', (req, res) => {
   res.sendFile(path.join(imagesFolder, req.query.file));
 });
 
+app.get('/audio', (req, res) => {
+  console.log(`audio ${req.query.file}`);
+
+  res.sendFile(path.join(audiosFolder, req.query.file));
+});
+
 app.get('/setup-story', (req, res) => {
   res.json({
     success: true
   });
 });
 
-app.get('/generate-scene', async (req, res) => {
-  console.log('generate-scene');
+app.get('/get-scene', async (req, res) => {
+  console.log('get-scene');
 
   res.json({
     success: true,
@@ -74,6 +84,34 @@ const generateBackgroundImage = async (prompt) => {
     writer.on('finish', resolve);
     writer.on('error', reject);
   });
+
+  return fileName;
+}
+
+app.get('/get-voice', async (req, res) => {
+  console.log('get-voice');
+
+  res.json({
+    success: true,
+    backgroundImageFile: await generateVoice('testasiojfdiojasidofjioa')
+  });
+});
+
+const generateVoice = async (passage) => {
+  console.log('generateVoice');
+
+  const response = await openai.audio.speech.create({
+    model: 'tts-1',
+    voice: 'alloy',
+    input: passage,
+    response_format: 'wav'
+  });
+
+  const fileName = `${Date.now()}.wav`;
+  const filePath = path.join(audiosFolder, fileName);
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  await fs.promises.writeFile(filePath, buffer);
 
   return fileName;
 }
