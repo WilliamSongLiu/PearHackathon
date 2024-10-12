@@ -21,7 +21,6 @@ public class NetworkManagerScript : MonoBehaviour
 	}
 
 	string baseUrl = "http://localhost:3000";
-	string imageBaseUrl = "http://localhost:3000/image";
 
 	public IEnumerator RequestJSON(string query, Action<string> callback)
 	{
@@ -40,7 +39,7 @@ public class NetworkManagerScript : MonoBehaviour
 
 	public IEnumerator RequestImage(string file, Action<Sprite> callback)
 	{
-		string requestUrl = $"{imageBaseUrl}/{file}";
+		string requestUrl = $"{baseUrl}/image?file={file}";
 		UnityWebRequest request = UnityWebRequestTexture.GetTexture(requestUrl);
 		yield return request.SendWebRequest();
 

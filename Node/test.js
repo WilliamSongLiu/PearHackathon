@@ -1,6 +1,7 @@
 import express from 'express';
 import OpenAI from 'openai';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const PORT = 3000;
@@ -18,8 +19,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/image', (req, res) => {
-  const imagePath = path.join('images', req.file);
-  res.sendFile(imagePath);
+  const imagePath = `./images/${req.query.file}`;
+  res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), imagePath));
 });
 
 app.get('/setup-story', (req, res) => {
