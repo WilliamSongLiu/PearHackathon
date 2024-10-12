@@ -9,6 +9,7 @@ public class GameManagerScript : MonoBehaviour
 	AudioSource audioSource;
 
 	[SerializeField] Image backgroundImage;
+	[SerializeField] GameObject bottomPanel;
 	[SerializeField] TMP_Text speakerText;
 	[SerializeField] TMP_Text lineText;
     [SerializeField] GameObject loadingPanel;
@@ -19,6 +20,7 @@ public class GameManagerScript : MonoBehaviour
 		StorySetup,
 		GeneratingAct,
 		PlayingJustStarted,
+		PlayingWaitingForAudio,
 		PlayingAnimating,
 		PlayingDoneAnimating
 	}
@@ -128,14 +130,10 @@ public class GameManagerScript : MonoBehaviour
 		if (state == State.PlayingJustStarted)
 		{
 			loadingPanel.SetActive(false);
+			bottomPanel.SetActive(false);
 
-			state = State.PlayingAnimating;
+			state = State.PlayingWaitingForAudio;
 			currentDialogueIndex = 0;
-			currentDialogueCharacterIndex = 0;
-			lastTextUpdate = 0f;
-
-			speakerText.text = act.dialogues[currentDialogueIndex].speaker;
-			lineText.text = "";
 
 			GenerateVoice(act.dialogues[currentDialogueIndex].line);
 		}
@@ -180,6 +178,15 @@ public class GameManagerScript : MonoBehaviour
 	{
 		audioSource.Stop();
 		audioSource.PlayOneShot(audioClip);
+
+		bottomPanel.SetActive(true);
+
+		state = State.PlayingAnimating;
+		currentDialogueCharacterIndex = 0;
+		lastTextUpdate = 0f;
+
+		speakerText.text = act.dialogues[currentDialogueIndex].speaker;
+		lineText.text = "";
 	}
 
 	public void ClickInterceptorClicked()

@@ -169,6 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundImage: {fileID: 1308678854}
+  bottomPanel: {fileID: 1933229237}
   speakerText: {fileID: 1523197543}
   lineText: {fileID: 731084338}
   loadingPanel: {fileID: 2003183589}
