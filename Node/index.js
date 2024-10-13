@@ -99,7 +99,7 @@ app.get('/generate-act', async (req, res) => {
 
       choices_made.push(last_choices[req.query.choiceIndex]);
     }
-    const completion = await generateAct(req.params.prompt ?? "mystery");
+    const completion = await generateAct();
     n_act++;
     // console.log("trying to summarize", completion.dialogue, choices_made);
     sceneSummaryPromise = summarizeScene(completion.dialogue);
