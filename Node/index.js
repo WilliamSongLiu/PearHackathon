@@ -103,7 +103,7 @@ app.get('/generate-act', async (req, res) => {
     n_act++;
     // console.log("trying to summarize", completion.dialogue, choices_made);
     sceneSummaryPromise = summarizeScene(completion.dialogue);
-    last_choices = completion.decision.choices;
+    last_choices = completion.choices;
 
     const relevant_character_descriptions = completion.characters.map((key, index) => {
       if (key in character_descriptions) {
@@ -123,7 +123,7 @@ app.get('/generate-act', async (req, res) => {
     const backgroundImageFile = await generateBackgroundImage(image_gen_prompt);
     const result = {
       backgroundImageFile: backgroundImageFile,
-      decision: completion.decision,
+      choices: completion.choices,
       dialogue: completion.dialogue,
     }
 

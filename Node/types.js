@@ -32,10 +32,10 @@ export const actSchema = z.object({
       line: z.string()  // Dialogue line
     })),
     // .nonempty(),
-    decision: z.object({
-        statement: z.string().describe("Description about the decision being made"),
-        choices: z.array(z.string())    // Two concise choices in bullet point format
-        //   .length(2)
-          .describe("Two distinct choices that align with the story's progress and character development")
-    })
+    // decision: z.object({
+        // statement: z.string().describe("Description about the decision being made"),
+    choices: z.array(z.string())    // Two concise choices in bullet point format
+    //   .length(2)
+        .describe("Two distinct choices that align with the story's progress and character development")
+    // })
   });
