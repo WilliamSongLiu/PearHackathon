@@ -120,9 +120,9 @@ app.get('/generate-act', async (req, res) => {
 
     // console.log("image_gen_prompt", image_gen_prompt)
 
-    const imageFileName = await generateBackgroundImage(image_gen_prompt);
+    const backgroundImageFile = await generateBackgroundImage(image_gen_prompt);
     const result = {
-      imageFileName: imageFileName,
+      backgroundImageFile: backgroundImageFile,
       decision: completion.decision,
       dialogue: completion.dialogue,
     }
