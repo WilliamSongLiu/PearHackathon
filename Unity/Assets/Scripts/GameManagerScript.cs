@@ -6,14 +6,30 @@ using TMPro;
 [RequireComponent(typeof(AudioSource))]
 public class GameManagerScript : MonoBehaviour
 {
+	public static GameManagerScript Instance { get; private set; }
+	private void Awake()
+	{
+		if (Instance == null)
+		{
+			Instance = this;
+		} else
+		{
+			Destroy(gameObject);
+		}
+	}
+
 	AudioSource audioSource;
 
 	[SerializeField] Image backgroundImage;
 	[SerializeField] GameObject bottomPanel;
 	[SerializeField] TMP_Text speakerText;
 	[SerializeField] TMP_Text lineText;
-    [SerializeField] GameObject loadingPanel;
+	[SerializeField] GameObject clickInterceptorPanel;
+	[SerializeField] GameObject choicePanel;
+	[SerializeField] GameObject loadingPanel;
 	[SerializeField] TMP_Text loadingText;
+
+	[SerializeField] GameObject choicePrefab;
 
 	enum State
 	{
@@ -22,7 +38,8 @@ public class GameManagerScript : MonoBehaviour
 		PlayingJustStarted,
 		PlayingWaitingForAudio,
 		PlayingAnimating,
-		PlayingDoneAnimating
+		PlayingDoneAnimating,
+		Choice
 	}
 	State state;
 
@@ -39,9 +56,11 @@ public class GameManagerScript : MonoBehaviour
 	class Act
 	{
 		public List<Dialogue> dialogues;
-		public Act(List<Dialogue> _dialogues)
+		public List<string> choices;
+		public Act(List<Dialogue> _dialogues, List<string> _choices)
 		{
 			dialogues = _dialogues;
+			choices = _choices;
 		}
 	}
 	Act act;
@@ -51,18 +70,19 @@ public class GameManagerScript : MonoBehaviour
 	float textInterval = 0.03f;
 	float lastTextUpdate;
 
-	private void Awake()
-	{
+	private void Start()
+    {
 		audioSource = GetComponent<AudioSource>();
 
 		act = new Act(new List<Dialogue>() {
 			new Dialogue("Bob", "You know, I always forget how nice it is to just sit here and relax. Life gets so hectic sometimes."),
 			new Dialogue("Joe", "I know what you mean. It feels like we’re always rushing from one thing to the next. Last week was a blur for me.")
+		}, new List<string>()
+		{
+			"I choose a",
+			"nah b"
 		});
-	}
 
-	private void Start()
-    {
 		loadingText.text = "Building the world...";
 		loadingPanel.SetActive(true);
 
@@ -131,6 +151,8 @@ public class GameManagerScript : MonoBehaviour
 		{
 			loadingPanel.SetActive(false);
 			bottomPanel.SetActive(false);
+			clickInterceptorPanel.SetActive(false);
+			choicePanel.SetActive(false);
 
 			state = State.PlayingWaitingForAudio;
 			currentDialogueIndex = 0;
@@ -180,6 +202,7 @@ public class GameManagerScript : MonoBehaviour
 		audioSource.PlayOneShot(audioClip);
 
 		bottomPanel.SetActive(true);
+		clickInterceptorPanel.SetActive(true);
 
 		state = State.PlayingAnimating;
 		currentDialogueCharacterIndex = 0;
@@ -203,17 +226,39 @@ public class GameManagerScript : MonoBehaviour
 			currentDialogueIndex++;
 			if (currentDialogueIndex >= act.dialogues.Count)
 			{
-				return;
+				bottomPanel.SetActive(false);
+				clickInterceptorPanel.SetActive(false);
+				choicePanel.SetActive(true);
+
+				foreach (Transform child in choicePanel.transform)
+				{
+					Destroy(child.gameObject);
+				}
+
+				for (int i = 0; i < act.choices.Count; i++)
+				{
+					GameObject choiceInstance = Instantiate(choicePrefab, choicePanel.transform);
+					ChoiceScript choiceScript = choiceInstance.GetComponent<ChoiceScript>();
+					choiceScript.Init(i, act.choices[i]);
+				}
+
+				state = State.Choice;
+
 			}
+			else
+			{
+				bottomPanel.SetActive(false);
+				clickInterceptorPanel.SetActive(false);
 
-			state = State.PlayingAnimating;
-			currentDialogueCharacterIndex = 0;
-			lastTextUpdate = 0f;
+				state = State.PlayingWaitingForAudio;
 
-			speakerText.text = act.dialogues[currentDialogueIndex].speaker;
-			lineText.text = "";
-
-			GenerateVoice(act.dialogues[currentDialogueIndex].line);
+				GenerateVoice(act.dialogues[currentDialogueIndex].line);
+			}
 		}
+	}
+
+	public void ClickChoice(int index)
+	{
+		Debug.Log($"click {index}");
 	}
 }
