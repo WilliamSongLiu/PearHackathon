@@ -140,9 +140,9 @@ app.get('/make-choice', async (req, res) => {
 });
 
 
-const generateStorySetup = async (genre) => {
+const generateStorySetup = async (genre, playerName) => {
   try {
-    const prompt = `Generate a plot for a 5 minute ${genre} visual novel`
+    const prompt = `Generate a plot for a 5 minute ${genre} visual novel. The main character is named ${playerName}.`
 
     const messages = [
       { role: 'system', content: setup_plot_system_prompt },
