@@ -43,27 +43,19 @@ public class GameManagerScript : MonoBehaviour
 	}
 	State state;
 
+	[System.Serializable]
 	class Dialogue
 	{
 		public string speaker;
 		public string line;
-		public Dialogue(string _speaker, string _line)
-		{
-			speaker = _speaker;
-			line = _line;
-		}
 	}
 	class Act
 	{
-		public List<Dialogue> dialogues;
-		public List<string> choices;
-		public Act(List<Dialogue> _dialogues, List<string> _choices)
-		{
-			dialogues = _dialogues;
-			choices = _choices;
-		}
+		public string backgroundImageFile;
+		public Dialogue[] dialogues;
+		public string[] choices;
 	}
-	Act act;
+	Act currentAct;
 	int currentDialogueIndex;
 	int currentDialogueCharacterIndex;
 
@@ -73,15 +65,6 @@ public class GameManagerScript : MonoBehaviour
 	private void Start()
     {
 		audioSource = GetComponent<AudioSource>();
-
-		act = new Act(new List<Dialogue>() {
-			new Dialogue("Bob", "You know, I always forget how nice it is to just sit here and relax. Life gets so hectic sometimes."),
-			new Dialogue("Joe", "I know what you mean. It feels like we’re always rushing from one thing to the next. Last week was a blur for me.")
-		}, new List<string>()
-		{
-			"I choose a",
-			"nah b"
-		});
 
 		loadingText.text = "Building the world...";
 		loadingPanel.SetActive(true);
@@ -118,25 +101,15 @@ public class GameManagerScript : MonoBehaviour
 	{
 		state = State.GeneratingAct;
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act", GenerateActReceived));
-	}
-	class GenerateActResponse
-	{
-		public bool success;
-		public string backgroundImageFile;
+		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?choiceIndex=-1", GenerateActReceived));
 	}
 	void GenerateActReceived(string response)
 	{
-		GenerateActResponse json = JsonUtility.FromJson<GenerateActResponse>(response);
-		if (!json.success)
-		{
-			Debug.LogError("Error: !json.success");
-			return;
-		}
+		currentAct = JsonUtility.FromJson<Act>(response);
 
 		loadingText.text = "Loading...";
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestImage(json.backgroundImageFile, BackgroundImageReceived));
+		StartCoroutine(NetworkManagerScript.Instance.RequestImage(currentAct.backgroundImageFile, BackgroundImageReceived));
 	}
 	void BackgroundImageReceived(Sprite sprite)
 	{
@@ -157,16 +130,16 @@ public class GameManagerScript : MonoBehaviour
 			state = State.PlayingWaitingForAudio;
 			currentDialogueIndex = 0;
 
-			GenerateVoice(act.dialogues[currentDialogueIndex].line);
+			GenerateVoice(currentAct.dialogues[currentDialogueIndex].line);
 		}
 		else if (state == State.PlayingAnimating)
 		{
 			if (Time.time - lastTextUpdate >= textInterval)
 			{
 				currentDialogueCharacterIndex++;
-				lineText.text = act.dialogues[currentDialogueIndex].line.Substring(0, currentDialogueCharacterIndex);
+				lineText.text = currentAct.dialogues[currentDialogueIndex].line.Substring(0, currentDialogueCharacterIndex);
 
-				if (currentDialogueCharacterIndex >= act.dialogues[currentDialogueIndex].line.Length)
+				if (currentDialogueCharacterIndex >= currentAct.dialogues[currentDialogueIndex].line.Length)
 				{
 					state = State.PlayingDoneAnimating;
 				}
@@ -208,7 +181,7 @@ public class GameManagerScript : MonoBehaviour
 		currentDialogueCharacterIndex = 0;
 		lastTextUpdate = 0f;
 
-		speakerText.text = act.dialogues[currentDialogueIndex].speaker;
+		speakerText.text = currentAct.dialogues[currentDialogueIndex].speaker;
 		lineText.text = "";
 	}
 
@@ -217,14 +190,14 @@ public class GameManagerScript : MonoBehaviour
 		if (state == State.PlayingAnimating)
 		{
 			state = State.PlayingDoneAnimating;
-			lineText.text = act.dialogues[currentDialogueIndex].line;
+			lineText.text = currentAct.dialogues[currentDialogueIndex].line;
 
 			audioSource.Stop();
 		}
 		else if (state == State.PlayingDoneAnimating)
 		{
 			currentDialogueIndex++;
-			if (currentDialogueIndex >= act.dialogues.Count)
+			if (currentDialogueIndex >= currentAct.dialogues.Length)
 			{
 				bottomPanel.SetActive(false);
 				clickInterceptorPanel.SetActive(false);
@@ -235,11 +208,11 @@ public class GameManagerScript : MonoBehaviour
 					Destroy(child.gameObject);
 				}
 
-				for (int i = 0; i < act.choices.Count; i++)
+				for (int i = 0; i < currentAct.choices.Length; i++)
 				{
 					GameObject choiceInstance = Instantiate(choicePrefab, choicePanel.transform);
 					ChoiceScript choiceScript = choiceInstance.GetComponent<ChoiceScript>();
-					choiceScript.Init(i, act.choices[i]);
+					choiceScript.Init(i, currentAct.choices[i]);
 				}
 
 				state = State.Choice;
@@ -252,7 +225,7 @@ public class GameManagerScript : MonoBehaviour
 
 				state = State.PlayingWaitingForAudio;
 
-				GenerateVoice(act.dialogues[currentDialogueIndex].line);
+				GenerateVoice(currentAct.dialogues[currentDialogueIndex].line);
 			}
 		}
 	}
