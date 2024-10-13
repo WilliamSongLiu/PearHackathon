@@ -49,7 +49,7 @@ You will be supplied with:
 - A progress indicator showing proximity to the end
 
 **Output Requirements:**
-- List of characters in the scene
+- List of characters in the scene.
 - A detailed visual description of the scene's setting
 - Dialogue sequence labeled with the speaker, who should be a character in the scene or the narrator
 - Present a decision the main character needs to make at scene's end, with two choices to pick from
@@ -98,6 +98,7 @@ export const physical_description_system_prompt = `Create a detailed physical ap
 # Output Format
 
 The output should be a single, detailed paragraph describing the character's physical appearance, incorporating both explicit information and inferred traits where relevant.
+The paragraph should be limited to 400 characters to ensure concise yet descriptive content.
 
 # Examples
 
