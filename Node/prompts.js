@@ -43,7 +43,7 @@ Provide the output in a structured paragraph format, with clearly delineated sec
 
 export const generate_scene_system_prompt = `Create a scene for a visual novel using the given background information, characters list, and prior scenes if provided.
 
-Don't include parentheses in the output.
+Include a major event that introduces signficant plot development and information about at least one character and / or the fictional world that the story takes place in.
 
 You will be supplied with:
 - Background about the story
@@ -88,7 +88,9 @@ You will be supplied with:
   - Choice 1: Confront fears and enter the darkest area of the library.
   - Choice 2: Keep searching the safer, well-lit parts.
 
-(Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.)`;
+DO NOT include parentheses in the output.
+Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.`;
+
 
 export const physical_description_system_prompt = `Create a detailed physical appearance description for a character based on the provided character description.
 

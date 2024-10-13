@@ -169,7 +169,7 @@ const generatePhysicalDescription = async (description) => {
 
 const generateAct = async () => {
   try {
-    const prompt = `I want you to create act ${n_act} for a visual novel that has ${TOTAL_ACTS} acts. This act should take about 40-60 seconds to read.
+    let prompt = `I want you to create act ${n_act} for a visual novel that has ${TOTAL_ACTS} acts. This act should take about 30-40 seconds to read.
 
     The act should build upon the provided plot, list of previous scenes, and decision made by the main character in each scene. Keep in mind that the main decision will be made in act ${TOTAL_ACTS}.
 
@@ -179,6 +179,10 @@ const generateAct = async () => {
     ######## PREVIOUS SCENES AND DECISIONS ########
     ${scene_summaries.map((scene, index) => `---Scene ${index + 1}: ${scene}\nDecision made by main character at the end of the scene: ${choices_made[index]}`).join('\n\n')}
     `;
+
+    if (n_act === TOTAL_ACTS) {
+      prompt += `---Scene ${n_act}: This is the final scene. Make it a climactic scene that finishes up the story and make the final choice significant and unique.`
+    }
 
     console.log("generateAct prompt", prompt);
 
