@@ -9,7 +9,7 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import fs from 'fs';
 import axios from 'axios';
 
-const GPT_4o = 'gpt-4o';
+const GPT = 'gpt-4o';
 const DALL_E = 'dall-e-3';
 
 const TOTAL_ACTS = 5;
@@ -31,10 +31,7 @@ const openai = new OpenAI({
   apiKey: apiKeys.openai
 });
 
-app.get('/image', (req, res) => {
-  const imagePath = `./images/${req.query.file}`;
-  res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), imagePath));
-});
+
 
 app.get('/setup-story', async (req, res) => {
   try {
@@ -42,7 +39,7 @@ app.get('/setup-story', async (req, res) => {
     n_act = 1;
     scene_summaries = [];
     choices_made = ["1", "2", "3"];
-    character_descriptions = {};  
+    character_descriptions = {};
     sceneSummaryPromise = null;
 
     const completion = await generateStorySetup(req.query.genre ?? "pumpkin", req.query.playerName ?? "Pooja");
@@ -110,7 +107,7 @@ app.get('/generate-act', async (req, res) => {
       }
     }).join("\n");
     const image_gen_prompt = `Generate an image for this setting: ${completion.setting} with the characters: ${completion.characters.join(', ')}
-    
+
     Here's what each character looks like in this scene:
     ${relevant_character_descriptions}
     `;
@@ -132,7 +129,7 @@ app.get('/generate-act', async (req, res) => {
   }
 });
 
-app.get('/update-made-choice', async (req, res) => {
+app.get('/make-choice', async (req, res) => {
   choices_made.push(req.params.choice);
 });
 
@@ -149,7 +146,7 @@ const generateStorySetup = async (genre) => {
     // console.log(messages)
 
     const completion = await openai.beta.chat.completions.parse({
-      model: GPT_4o,
+      model: GPT,
       messages: messages,
       response_format: zodResponseFormat(storySchema, "story_setup"),
     });
@@ -172,7 +169,7 @@ const generatePhysicalDescription = async (description) => {
     ]
 
     const completion = await openai.chat.completions.create({
-      model: GPT_4o,
+      model: GPT,
       messages: messages,
     });
 
@@ -188,7 +185,7 @@ const generateAct = async () => {
     const prompt = `I want you to create act ${n_act} for a visual novel that has ${TOTAL_ACTS} acts. This act should take about 40-60 seconds to read.
 
     The act should build upon the provided plot, list of previous scenes, and decision made by the main character in each scene. Keep in mind that the main decision will be made in act ${TOTAL_ACTS}.
-    
+
     ######## PLOT ########
     ${JSON.stringify(story_setup)}
 
@@ -204,7 +201,7 @@ const generateAct = async () => {
     ]
 
     const completion = await openai.beta.chat.completions.parse({
-      model: GPT_4o,
+      model: GPT,
       messages: messages,
       response_format: zodResponseFormat(actSchema, "act_overview"),
     });
@@ -229,7 +226,7 @@ const summarizeScene = (scene_json) => {
     ]
 
     const completion = openai.chat.completions.create({
-      model: GPT_4o,
+      model: GPT,
       messages: messages,
     });
 
@@ -241,9 +238,6 @@ const summarizeScene = (scene_json) => {
 }
 
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
 
 // ------ Audio / Image stuff
 
@@ -257,15 +251,6 @@ if (!fs.existsSync(audiosFolder)){
   fs.mkdirSync(audiosFolder);
 }
 
-// const app = express();
-// const PORT = 3000;
-// app.use(express.json());
-
-// import apiKeys from './apiKeys.json' assert { type: 'json' };
-// const openai = new OpenAI({
-//   apiKey: apiKeys.openai
-// });
-
 app.get('/image', (req, res) => {
   console.log(`/image ${req.query.file}`);
 
@@ -278,12 +263,11 @@ app.get('/audio', (req, res) => {
   res.sendFile(path.join(audiosFolder, req.query.file));
 });
 
-
 const generateBackgroundImage = async (prompt) => {
   console.log(`generateBackgroundImage ${prompt}`);
 
   const response = await openai.images.generate({
-    model: 'dall-e-3',
+    model: DALL_E,
     prompt: prompt,
     size: '1792x1024',
     quality: 'standard',
@@ -339,3 +323,9 @@ const generateVoice = async (line) => {
   console.log(`generateVoice returned ${fileName}`);
   return fileName;
 }
+
+
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
