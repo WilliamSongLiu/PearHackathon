@@ -32,8 +32,6 @@ const openai = new OpenAI({
   apiKey: apiKeys.openai
 });
 
-
-
 app.get('/setup-story', async (req, res) => {
   try {
     // Restart
@@ -44,10 +42,8 @@ app.get('/setup-story', async (req, res) => {
     sceneSummaryPromise = null;
 
     const completion = await generateStorySetup(req.query.genre ?? "pumpkin", req.query.playerName ?? "Pooja");
-    console.log("completion\n", completion);
+    console.log("generateStorySetup completion\n", completion);
     story_setup = completion;
-
-    // console.log("completion.sideCharacters\n", completion.sideCharacters);
 
     const characterPromises = completion.sideCharacters.map(character => ({
       name: character.name,
@@ -59,31 +55,22 @@ app.get('/setup-story', async (req, res) => {
       promise: generatePhysicalDescription(completion.mainCharacter.description)
     });
 
-    // console.log(characterPromises)
-
     // Now wait for all promises to resolve
     Promise.all(characterPromises.map(entry => entry.promise))
     .then(results => {
       results.forEach((result, index) => {
         character_descriptions[characterPromises[index].name] = result;
       });
-
-      // console.log(character_descriptions)
     })
     .catch(error => {
       console.error(error);  // Handle any error
     });
 
-    console.log("start-story suceeded");
-    // res.status(200).json({ message: "Success" });
+    console.log("start-story / generatePhysicalDescriptions suceeded");
 
     res.json({
       success: true,
-      // voiceAudioFile: await generateVoice(req.query.line)
     });
-
-    // res.send(completion);
-    // return completion;
   } catch (error) {
     console.error('Error generating completion:', error);
     throw error;
@@ -94,14 +81,12 @@ app.get('/generate-act', async (req, res) => {
   try {
     if (sceneSummaryPromise !== null) {
       const sceneSummary = await sceneSummaryPromise;
-      console.log("completed sceneSummary", sceneSummary);
+      // console.log("completed sceneSummary", sceneSummary);
       scene_summaries.push(sceneSummary.choices[0].message.content);
-
       choices_made.push(last_choices[req.query.choiceIndex]);
     }
     const completion = await generateAct();
     n_act++;
-    // console.log("trying to summarize", completion.dialogue, choices_made);
     sceneSummaryPromise = summarizeScene(completion.dialogue);
     last_choices = completion.choices;
 
@@ -117,8 +102,6 @@ app.get('/generate-act', async (req, res) => {
     Here's what each character looks like in this scene:
     ${relevant_character_descriptions}
     `;
-
-    // console.log("image_gen_prompt", image_gen_prompt)
 
     const backgroundImageFile = await generateBackgroundImage(image_gen_prompt);
     const result = {
@@ -140,16 +123,14 @@ app.get('/make-choice', async (req, res) => {
 });
 
 
-const generateStorySetup = async (genre) => {
+const generateStorySetup = async (genre, playerName) => {
   try {
-    const prompt = `Generate a plot for a 5 minute ${genre} visual novel`
+    const prompt = `Generate a plot for a 5 minute ${genre} visual novel. The main character is named ${playerName}.`
 
     const messages = [
       { role: 'system', content: setup_plot_system_prompt },
       { role: 'user', content: prompt }
     ]
-
-    // console.log(messages)
 
     const completion = await openai.beta.chat.completions.parse({
       model: GPT,
@@ -157,9 +138,7 @@ const generateStorySetup = async (genre) => {
       response_format: zodResponseFormat(storySchema, "story_setup"),
     });
 
-    // console.log(completion)
     const return_value = completion.choices[0].message.parsed;
-    // console.log(return_value);
     return return_value;
   } catch (error) {
     console.error('Error generating completion:', error);
@@ -212,9 +191,9 @@ const generateAct = async () => {
       response_format: zodResponseFormat(actSchema, "act_overview"),
     });
 
-
     const return_value = completion.choices[0].message.parsed;
-    // console.log("generateAct return_value", return_value);
+    console.log("generateAct return_value", return_value);
+
     return return_value;
   } catch (error) {
     console.error('Error generating completion:', error);
