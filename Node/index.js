@@ -24,6 +24,7 @@ let choices_made = [];
 let character_descriptions = {};
 let n_act = 1;
 let sceneSummaryPromise = null;
+let last_choices = [];
 
 import apiKeys from './apiKeys.json' assert { type: 'json' };
 const openai = new OpenAI({
@@ -35,7 +36,7 @@ app.get('/image', (req, res) => {
   res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), imagePath));
 });
 
-app.get('/start-story', async (req, res) => {
+app.get('/setup-story', async (req, res) => {
   try {
     // Restart
     n_act = 1;
@@ -44,7 +45,7 @@ app.get('/start-story', async (req, res) => {
     character_descriptions = {};  
     sceneSummaryPromise = null;
 
-    const completion = await generateStorySetup(req.params.prompt ?? "mystery");
+    const completion = await generateStorySetup(req.query.genre ?? "pumpkin", req.query.playerName ?? "Pooja");
     console.log("completion\n", completion);
     story_setup = completion;
 
@@ -75,27 +76,31 @@ app.get('/start-story', async (req, res) => {
       console.error(error);  // Handle any error
     });
 
+    console.log("start-story suceeded");
+    res.status(200).json({ message: "Success" });
 
-    res.send(completion);
-    return completion;
+    // res.send(completion);
+    // return completion;
   } catch (error) {
     console.error('Error generating completion:', error);
     throw error;
   }
 });
 
-app.get('/get-next-act', async (req, res) => {
+app.get('/generate-act', async (req, res) => {
   try {
     if (sceneSummaryPromise !== null) {
       const sceneSummary = await sceneSummaryPromise;
       console.log("completed sceneSummary", sceneSummary);
       scene_summaries.push(sceneSummary.choices[0].message.content);
+
+      choices_made.push(last_choices[req.query.choiceIndex]);
     }
     const completion = await generateAct(req.params.prompt ?? "mystery");
     n_act++;
-
-    console.log("trying to summarize", completion.dialogue, choices_made);
+    // console.log("trying to summarize", completion.dialogue, choices_made);
     sceneSummaryPromise = summarizeScene(completion.dialogue);
+    last_choices = completion.decision.choices;
 
     const relevant_character_descriptions = completion.characters.map((key, index) => {
       if (key in character_descriptions) {
@@ -110,7 +115,7 @@ app.get('/get-next-act', async (req, res) => {
     ${relevant_character_descriptions}
     `;
 
-    console.log("image_gen_prompt", image_gen_prompt)
+    // console.log("image_gen_prompt", image_gen_prompt)
 
     const imageFileName = await generateBackgroundImage(image_gen_prompt);
     const result = {
@@ -206,7 +211,7 @@ const generateAct = async () => {
 
 
     const return_value = completion.choices[0].message.parsed;
-    console.log("generateAct return_value", return_value);
+    // console.log("generateAct return_value", return_value);
     return return_value;
   } catch (error) {
     console.error('Error generating completion:', error);
