@@ -37,7 +37,7 @@ app.get('/setup-story', async (req, res) => {
     // Restart
     n_act = 1;
     scene_summaries = [];
-    choices_made = ["1", "2", "3"];
+    choices_made = [];
     character_descriptions = {};
     sceneSummaryPromise = null;
 
