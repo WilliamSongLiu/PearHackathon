@@ -27,6 +27,8 @@ let n_act = 1;
 let sceneSummaryPromise = null;
 let last_choices = [];
 
+voices = ["fable", "nova", "shimmer", "alloy", "echo", "onyx"]
+
 import apiKeys from './apiKeys.json' assert { type: 'json' };
 const openai = new OpenAI({
   apiKey: apiKeys.openai
@@ -283,18 +285,22 @@ const generateBackgroundImage = async (prompt) => {
 app.get('/generate-voice', async (req, res) => {
   console.log('/generate-voice');
 
+  const characterName = req.query.characterName;
+  const voice_i = Object.keys(character_descriptions).findIndex(key => key === characterName)
+  // const voice = 
+
   res.json({
     success: true,
-    voiceAudioFile: await generateVoice(req.query.line)
+    voiceAudioFile: await generateVoice(req.query.line, voices[voice_i % voices.length])
   });
 });
 
-const generateVoice = async (line) => {
+const generateVoice = async (line, voice) => {
   console.log(`generateVoice ${line}`);
 
   const response = await openai.audio.speech.create({
     model: 'tts-1',
-    voice: 'alloy',
+    voice: voice,
     input: line,
     response_format: 'mp3'
   });

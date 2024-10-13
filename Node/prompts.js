@@ -43,6 +43,8 @@ Provide the output in a structured paragraph format, with clearly delineated sec
 
 export const generate_scene_system_prompt = `Create a scene for a visual novel using the given background information, characters list, and prior scenes if provided.
 
+Don't include parentheses in the output.
+
 You will be supplied with:
 - Background about the story
 - A list of characters 
