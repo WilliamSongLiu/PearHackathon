@@ -133,7 +133,7 @@ public class GameManagerScript : MonoBehaviour
 			state = State.PlayingWaitingForAudio;
 			currentDialogueIndex = 0;
 
-			GenerateVoice(currentAct.dialogues[currentDialogueIndex].line);
+			GenerateVoice();
 		}
 		else if (state == State.PlayingAnimating)
 		{
@@ -154,7 +154,7 @@ public class GameManagerScript : MonoBehaviour
 
 	void GenerateVoice(string line)
 	{
-		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-voice?line={line}", GenerateVoiceReceived));
+		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-voice?speaker={currentAct.dialogues[currentDialogueIndex].speaker}&line={currentAct.dialogues[currentDialogueIndex].line}", GenerateVoiceReceived));
 	}
 	class GenerateVoiceResponse
 	{
@@ -228,7 +228,7 @@ public class GameManagerScript : MonoBehaviour
 
 				state = State.PlayingWaitingForAudio;
 
-				GenerateVoice(currentAct.dialogues[currentDialogueIndex].line);
+				GenerateVoice();
 			}
 		}
 	}
