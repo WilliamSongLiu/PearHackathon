@@ -27,7 +27,7 @@ let n_act = 1;
 let sceneSummaryPromise = null;
 let last_choices = [];
 
-voices = ["fable", "nova", "shimmer", "alloy", "echo", "onyx"]
+const voices = ["fable", "nova", "shimmer", "alloy", "echo"]
 
 import apiKeys from './apiKeys.json' assert { type: 'json' };
 const openai = new OpenAI({
@@ -286,12 +286,16 @@ app.get('/generate-voice', async (req, res) => {
   console.log('/generate-voice');
 
   const characterName = req.query.characterName;
-  const voice_i = Object.keys(character_descriptions).findIndex(key => key === characterName)
-  // const voice = 
+
+  let voice = "onyx";
+  if (characterName in character_descriptions) {
+    const voice_i = Object.keys(character_descriptions).findIndex(key => key === characterName)
+    voice = voices[voice_i % voices.length];
+  } 
 
   res.json({
     success: true,
-    voiceAudioFile: await generateVoice(req.query.line, voices[voice_i % voices.length])
+    voiceAudioFile: await generateVoice(req.query.line, voice)
   });
 });
 
