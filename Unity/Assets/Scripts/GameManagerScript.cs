@@ -152,7 +152,7 @@ public class GameManagerScript : MonoBehaviour
 		}
 	}
 
-	void GenerateVoice(string line)
+	void GenerateVoice()
 	{
 		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-voice?speaker={currentAct.dialogues[currentDialogueIndex].speaker}&line={currentAct.dialogues[currentDialogueIndex].line}", GenerateVoiceReceived));
 	}
