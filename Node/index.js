@@ -285,13 +285,14 @@ const generateBackgroundImage = async (prompt) => {
 app.get('/generate-voice', async (req, res) => {
   console.log('/generate-voice');
 
-  const characterName = req.query.characterName;
+  const characterName = req.query.speaker;
 
   let voice = "onyx";
+  console.log("character_descriptions", character_descriptions, characterName, characterName in character_descriptions)
   if (characterName in character_descriptions) {
     const voice_i = Object.keys(character_descriptions).findIndex(key => key === characterName)
     voice = voices[voice_i % voices.length];
-  } 
+  }
 
   res.json({
     success: true,
