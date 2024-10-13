@@ -74,7 +74,12 @@ app.get('/setup-story', async (req, res) => {
     });
 
     console.log("start-story suceeded");
-    res.status(200).json({ message: "Success" });
+    // res.status(200).json({ message: "Success" });
+
+    res.json({
+      success: true,
+      // voiceAudioFile: await generateVoice(req.query.line)
+    });
 
     // res.send(completion);
     // return completion;
