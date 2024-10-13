@@ -123,8 +123,8 @@ app.get('/generate-act', async (req, res) => {
     const backgroundImageFile = await generateBackgroundImage(image_gen_prompt);
     const result = {
       backgroundImageFile: backgroundImageFile,
-      choices: completion.choices,
-      dialogue: completion.dialogue,
+      dialogues: completion.dialogue,
+      choices: completion.choices
     }
 
     res.send(result);
