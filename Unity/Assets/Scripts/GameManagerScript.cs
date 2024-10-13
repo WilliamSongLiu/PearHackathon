@@ -77,7 +77,7 @@ public class GameManagerScript : MonoBehaviour
 		state = State.StorySetup;
 
 		StartCoroutine(NetworkManagerScript.Instance.RequestJSON(
-			$"/setup-story?genre={DataManager.genre}", SetupStoryReceived));
+			$"/setup-story?genre={DataManager.genre}&playerName={DataManager.playerName}", SetupStoryReceived));
 	}
 	class SetupStoryResponse
 	{
@@ -94,14 +94,17 @@ public class GameManagerScript : MonoBehaviour
 
 		loadingText.text = "Generating the story...";
 
-		GenerateAct();
+		GenerateAct(-1);
 	}
 
-	void GenerateAct()
+	void GenerateAct(int choiceIndex)
 	{
+		loadingText.text = "Loading next act...";
+		loadingPanel.SetActive(true);
+
 		state = State.GeneratingAct;
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?choiceIndex=-1", GenerateActReceived));
+		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?choiceIndex={choiceIndex}", GenerateActReceived));
 	}
 	void GenerateActReceived(string response)
 	{
@@ -232,6 +235,6 @@ public class GameManagerScript : MonoBehaviour
 
 	public void ClickChoice(int index)
 	{
-		Debug.Log($"click {index}");
+		GenerateAct(index);
 	}
 }
