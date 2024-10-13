@@ -1,11 +1,12 @@
 import express from 'express';
 import OpenAI from 'openai';
-import path from 'path';
-import { fileURLToPath } from 'url';
+
 import { generate_scene_system_prompt, setup_plot_system_prompt, physical_description_system_prompt, summarize_scene_system_prompt } from './prompts.js';
 import { actSchema, storySchema } from './types.js';
 import { zodResponseFormat } from "openai/helpers/zod";
 
+import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import axios from 'axios';
 
