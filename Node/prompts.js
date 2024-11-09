@@ -6,7 +6,7 @@ Use the given main character's name.
 # Steps
 
 1. **Central Struggle and Decision**: Define the main conflict or struggle the story centers around. Detail the major decision the protagonist faces, including potential consequences.
-  
+
 2. **Background and World Setting**: Describe the setting of the novel, including time period, location, and any relevant societal aspects or physical environments that influence the story.
 
 3. **Main Character Description**: Provide a detailed profile of the main character, including their personality traits, motivations, background, and role in the story.
@@ -22,7 +22,7 @@ Provide the output in a structured paragraph format, with clearly delineated sec
 **Example 1:**
 
 - **Central Struggle and Decision**: The protagonist, [Name], must decide whether to embrace their destiny as the heir to a hidden world of magic or to continue living a mundane, yet safe life.
-  
+
 - **Background and World Setting**: Set in present-day New York, hidden magical societies exist parallel to the normal world, remaining unseen by everyday people.
 
 - **Main Character**: [Name] is a 17-year-old with a curious mind and a love for art. Raised by their grandparents, they've always suspected there was more to their family history than meets the eye.
@@ -47,7 +47,7 @@ Include a major event that introduces signficant plot development and informatio
 
 You will be supplied with:
 - Background about the story
-- A list of characters 
+- A list of characters
 - Any prior scenes in the story, if available
 - A significant decision to be made by the end of the story
 - A progress indicator showing proximity to the end
