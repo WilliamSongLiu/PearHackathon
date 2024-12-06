@@ -6,6 +6,8 @@ import { setup_plot_system_prompt, generate_scene_system_prompt, summarize_scene
 import { generateImage, generateVoice } from './assetGeneration.js';
 
 const openai = new OpenAI({ apiKey: apiKeys.openai });
+const model = 'gpt-4o-mini';
+
 let n_act = 1;
 let storySetup = {};
 let sceneSummaries = [];
@@ -22,7 +24,7 @@ export const setupStory = async (genre, playerName) => {
 
     const prompt = `Generate a plot for a 5-minute ${genre || 'pumpkin'} visual novel. The main character is named ${playerName || 'Pooja'}.`;
     const completion = await openai.beta.chat.completions.parse({
-        model: 'gpt-4o',
+        model: model,
         messages: [
             { role: 'system', content: setup_plot_system_prompt },
             { role: 'user', content: prompt },
@@ -43,7 +45,7 @@ export const generateAct = async (choiceIndex) => {
 
     const prompt = `Act ${n_act}: Generate a scene based on previous acts and setup.`;
     const completion = await openai.beta.chat.completions.parse({
-        model: 'gpt-4o',
+        model: model,
         messages: [
             { role: 'system', content: generate_scene_system_prompt },
             { role: 'user', content: prompt },
@@ -77,7 +79,7 @@ export const makeChoice = (choice) => choicesMade.push(choice);
 const summarizeScene = async (sceneJson) => {
     const prompt = `Summarize this scene: ${JSON.stringify(sceneJson)}`;
     return await openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: model,
         messages: [
             { role: 'system', content: summarize_scene_system_prompt },
             { role: 'user', content: prompt },

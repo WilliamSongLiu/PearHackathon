@@ -5,6 +5,7 @@ import fs from 'fs';
 import apiKeys from '../apiKeys.json' assert { type: 'json' };
 
 const openai = new OpenAI({ apiKey: apiKeys.openai });
+
 const __dirname = path.dirname(import.meta.url);
 const imagesFolder = path.join(__dirname, '../images');
 const audiosFolder = path.join(__dirname, '../audios');
