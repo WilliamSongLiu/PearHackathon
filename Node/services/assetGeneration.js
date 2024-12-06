@@ -11,6 +11,7 @@ const imagesFolder = path.join(__dirname, '../images');
 const audiosFolder = path.join(__dirname, '../audios');
 
 export const generateImage = async (prompt) => {
+    console.log("generateImage");
     const response = await openai.images.generate({
         model: 'dall-e-3',
         prompt,
@@ -32,6 +33,7 @@ export const generateImage = async (prompt) => {
 };
 
 export const generateVoice = async (line, speaker) => {
+    console.log("generateVoice");
     const response = await openai.audio.speech.create({
         model: 'tts-1',
         voice: speaker,

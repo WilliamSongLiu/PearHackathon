@@ -1,4 +1,3 @@
-
 export const setup_plot_system_prompt = `Create a comprehensive pitch for a visual novel plot, focusing on a central struggle and a significant decision. Include detailed background and world setting, an in-depth main character description, and a list of 4 side characters with brief descriptions.
 
 Use the given main character's name.

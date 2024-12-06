@@ -16,6 +16,8 @@ let lastChoices = [];
 let sceneSummaryPromise = null;
 
 export const setupStory = async (genre, playerName) => {
+    console.log("setupStory");
+
     n_act = 1;
     storySetup = {};
     sceneSummaries = [];
@@ -37,6 +39,8 @@ export const setupStory = async (genre, playerName) => {
 };
 
 export const generateAct = async (choiceIndex) => {
+    console.log("generateAct");
+
     if (sceneSummaryPromise !== null) {
         const sceneSummary = await sceneSummaryPromise;
         sceneSummaries.push(sceneSummary.choices[0].message.content);
@@ -74,9 +78,15 @@ export const generateAct = async (choiceIndex) => {
     return act;
 };
 
-export const makeChoice = (choice) => choicesMade.push(choice);
+export const makeChoice = (choice) => {
+    console.log("makeChoice");
+
+    choicesMade.push(choice);
+}
 
 const summarizeScene = async (sceneJson) => {
+    console.log("summarizeScene");
+
     const prompt = `Summarize this scene: ${JSON.stringify(sceneJson)}`;
     return await openai.chat.completions.create({
         model: model,
