@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import apiKeys from '../apiKeys.json' assert { type: 'json' };
+import apiKeys from '../apiKeys.json' with { type: 'json' };
 import { storySchema, actSchema } from '../schemas.js';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { setup_plot_system_prompt, generate_scene_system_prompt, summarize_scene_system_prompt } from '../prompts.js';

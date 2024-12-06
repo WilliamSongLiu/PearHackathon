@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import path from 'path';
 import fs from 'fs';
-import apiKeys from '../apiKeys.json' assert { type: 'json' };
+import apiKeys from '../apiKeys.json' with { type: 'json' };
 
 const openai = new OpenAI({ apiKey: apiKeys.openai });
 
