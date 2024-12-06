@@ -1,8 +1,8 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { setupStory, generateAct, makeChoice } from './services/openaiService.js';
-import { generateImage, generateVoice } from './services/assetService.js';
+import { setupStory, generateAct, makeChoice } from './services/textGeneration.js';
+import { generateImage, generateVoice } from './services/assetGeneration.js';
 
 const app = express();
 const PORT = 3000;
