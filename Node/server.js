@@ -1,8 +1,8 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { setupStory, generateAct, makeChoice } from './services/textGeneration.js';
-import { generateImage, generateVoice } from './services/assetGeneration.js';
 
 const app = express();
 const PORT = 3000;
@@ -47,15 +47,5 @@ app.get('/make-choice', (req, res) => {
 
 app.get('/image', (req, res) => res.sendFile(path.join(imagesFolder, req.query.file)));
 app.get('/audio', (req, res) => res.sendFile(path.join(audiosFolder, req.query.file)));
-
-app.get('/generate-voice', async (req, res) => {
-    try {
-        const voiceFile = await generateVoice(req.query.line, req.query.speaker);
-        res.json({ success: true, voiceFile });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: 'Failed to generate voice' });
-    }
-});
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

@@ -2,7 +2,8 @@ import OpenAI from 'openai';
 import apiKeys from '../apiKeys.json' assert { type: 'json' };
 import { storySchema, actSchema } from '../schemas.js';
 import { zodResponseFormat } from 'openai/helpers/zod';
-import { setup_plot_system_prompt, generate_scene_system_prompt, physical_description_system_prompt, summarize_scene_system_prompt } from '../prompts.js';
+import { setup_plot_system_prompt, generate_scene_system_prompt, summarize_scene_system_prompt } from '../prompts.js';
+import { generateImage, generateVoice } from './assetGeneration.js';
 
 const openai = new OpenAI({ apiKey: apiKeys.openai });
 let n_act = 1;
@@ -52,8 +53,22 @@ export const generateAct = async (choiceIndex) => {
 
     n_act++;
     const act = completion.choices[0].message.parsed;
+
+    // Generate image for the act
+    const imageFileName = await generateImage(`Scene from Act ${n_act}: ${act.setting}`);
+    act.imageFile = imageFileName;
+
+    // Generate voice files for each dialogue line
+    const voiceFiles = [];
+    for (const line of act.dialogue) {
+        const voiceFileName = await generateVoice(line.line, line.speaker);
+        voiceFiles.push({ speaker: line.speaker, file: voiceFileName });
+    }
+    act.voiceFiles = voiceFiles;
+
     sceneSummaryPromise = summarizeScene(act.dialogue);
     lastChoices = act.choices;
+
     return act;
 };
 
