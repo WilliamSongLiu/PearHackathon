@@ -25,7 +25,7 @@ export const storySchema = z.object({
 export const actSchema = z.object({
     characters: z.array(z.string()),
     setting: z.string(),
-    dialogue: z.array(
+    dialogues: z.array(
         z.object({
             speaker: z.string(),
             line: z.string(),

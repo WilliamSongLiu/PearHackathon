@@ -81,14 +81,11 @@ export const generateAct = async (choiceIndex) => {
     act.backgroundImageFile = await generateImage(act.setting);
 
     // Generate voice files for each dialogue line
-    const voiceFiles = [];
-    for (const line of act.dialogue) {
-        const voiceFileName = await generateVoice(line.speaker, line.line);
-        voiceFiles.push({ speaker: line.speaker, file: voiceFileName });
+    for (let i = 0; i < act.dialogues.length; i++) {
+        act.dialogues[i].voiceAudioFile = await generateVoice(act.dialogues[i].speaker, act.dialogues[i].line);
     }
-    act.voiceFiles = voiceFiles;
 
-    sceneSummaryPromise = summarizeScene(act.dialogue);
+    sceneSummaryPromise = summarizeScene(act.dialogues);
     lastChoices = act.choices;
 
     console.log(chalk.yellow("generateAct"));
@@ -103,10 +100,10 @@ export const makeChoice = (choice) => {
     choicesMade.push(choice);
 }
 
-const summarizeScene = async (sceneJson) => {
+const summarizeScene = async (dialogues) => {
     console.log(chalk.blue("summarizeScene"));
 
-    const prompt = `Summarize this scene: ${JSON.stringify(sceneJson)}`;
+    const prompt = `Summarize this scene: ${JSON.stringify(dialogues)}`;
     const messages = [
         { role: 'system', content: summarize_act_system_prompt },
         { role: 'user', content: prompt },

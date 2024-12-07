@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -50,9 +49,11 @@ public class GameManagerScript : MonoBehaviour
 
     private class Act
     {
-        public string backgroundImageFile;
+        public string[] characters;
+        public string setting;
         public Dialogue[] dialogues;
         public string[] choices;
+        public string backgroundImageFile;
     }
 
     private Act currentAct;
@@ -73,26 +74,11 @@ public class GameManagerScript : MonoBehaviour
     {
         state = State.StorySetup;
         StartCoroutine(NetworkManagerScript.Instance.RequestJSON(
-            $"/setup-story?genre={DataManager.genre}&playerName={DataManager.playerName}", SetupStoryReceived));
-    }
-
-    [System.Serializable]
-    private class SetupStoryResponse
-    {
-        public bool success;
-    }
-
-    private void SetupStoryReceived(string response)
-    {
-        SetupStoryResponse json = JsonUtility.FromJson<SetupStoryResponse>(response);
-        if (!json.success)
-        {
-            Debug.LogError("Error: Story setup failed.");
-            return;
-        }
-
-        loadingText.text = "Generating the story...";
-        GenerateAct(-1);
+            $"/setup-story?genre={DataManager.genre}&playerName={DataManager.playerName}", response =>
+            {
+                loadingText.text = "Generating the story...";
+                GenerateAct(-1);
+            }));
     }
 
     private void GenerateAct(int choiceIndex)
@@ -100,20 +86,17 @@ public class GameManagerScript : MonoBehaviour
         loadingText.text = "Loading next act...";
         loadingPanel.SetActive(true);
         state = State.GeneratingAct;
-        StartCoroutine(NetworkManagerScript.Instance.RequestJSON(
-            $"/generate-act?choiceIndex={choiceIndex}", GenerateActReceived));
-    }
+        StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?choiceIndex={choiceIndex}",
+            response =>
+            {
+                currentAct = JsonUtility.FromJson<Act>(response);
 
-    private void GenerateActReceived(string response)
-    {
-        currentAct = JsonUtility.FromJson<Act>(response);
-
-        // Load background image
-        StartCoroutine(NetworkManagerScript.Instance.RequestImage(currentAct.backgroundImageFile, sprite =>
-        {
-            backgroundImage.sprite = sprite;
-            StartPlayingAct();
-        }));
+                StartCoroutine(NetworkManagerScript.Instance.RequestImage(currentAct.backgroundImageFile, sprite =>
+                {
+                    backgroundImage.sprite = sprite;
+                    StartPlayingAct();
+                }));
+            }));
     }
 
     private void StartPlayingAct()
@@ -127,19 +110,6 @@ public class GameManagerScript : MonoBehaviour
         state = State.Playing;
 
         PlayDialogue();
-    }
-
-    private void Update()
-    {
-        if (state == State.Playing && Time.time - lastTextUpdate >= textInterval)
-        {
-            if (currentDialogueCharacterIndex < currentAct.dialogues[currentDialogueIndex].line.Length)
-            {
-                currentDialogueCharacterIndex++;
-                lineText.text = currentAct.dialogues[currentDialogueIndex].line.Substring(0, currentDialogueCharacterIndex);
-                lastTextUpdate = Time.time;
-            }
-        }
     }
 
     private void PlayDialogue()
@@ -171,6 +141,19 @@ public class GameManagerScript : MonoBehaviour
         {
             bottomPanel.SetActive(true);
             clickInterceptorPanel.SetActive(true);
+        }
+    }
+
+    private void Update()
+    {
+        if (state == State.Playing && Time.time - lastTextUpdate >= textInterval)
+        {
+            if (currentDialogueCharacterIndex < currentAct.dialogues[currentDialogueIndex].line.Length)
+            {
+                currentDialogueCharacterIndex++;
+                lineText.text = currentAct.dialogues[currentDialogueIndex].line.Substring(0, currentDialogueCharacterIndex);
+                lastTextUpdate = Time.time;
+            }
         }
     }
 

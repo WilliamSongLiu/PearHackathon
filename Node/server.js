@@ -19,30 +19,30 @@ if (!fs.existsSync(audiosFolder)) fs.mkdirSync(audiosFolder);
 app.get('/setup-story', async (req, res) => {
     try {
         const response = await setupStory(req.query.genre, req.query.playerName);
-        res.json({ success: true, storySetup: response });
+        res.json(response);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, error: 'Failed to setup story' });
+        res.status(500);
     }
 });
 
 app.get('/generate-act', async (req, res) => {
     try {
         const act = await generateAct(req.query.choiceIndex);
-        res.json({ success: true, act });
+        res.json(act);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, error: 'Failed to generate act' });
+        res.status(500);
     }
 });
 
 app.get('/make-choice', (req, res) => {
     try {
         makeChoice(req.query.choice);
-        res.json({ success: true });
+        res.json({});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, error: 'Failed to make choice' });
+        res.status(500);
     }
 });
 
