@@ -1,5 +1,5 @@
-import OpenAI from 'openai';
 import chalk from 'chalk';
+import OpenAI from 'openai';
 import apiKeys from '../apiKeys.json' with { type: 'json' };
 import { storySchema, actSchema } from '../schemas.js';
 import { zodResponseFormat } from 'openai/helpers/zod';
@@ -78,8 +78,7 @@ export const generateAct = async (choiceIndex) => {
     const act = completion.choices[0].message.parsed;
 
     // Generate image for the act
-    const imageFileName = await generateImage(act.setting);
-    act.imageFile = imageFileName;
+    act.backgroundImageFile = await generateImage(act.setting);
 
     // Generate voice files for each dialogue line
     const voiceFiles = [];
@@ -91,6 +90,9 @@ export const generateAct = async (choiceIndex) => {
 
     sceneSummaryPromise = summarizeScene(act.dialogue);
     lastChoices = act.choices;
+
+    console.log(chalk.yellow("generateAct"));
+    console.log(act);
 
     return act;
 };

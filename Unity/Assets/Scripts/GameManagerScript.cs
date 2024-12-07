@@ -45,7 +45,7 @@ public class GameManagerScript : MonoBehaviour
     {
         public string speaker;
         public string line;
-        public string voiceAudioFile; // Pre-generated audio file
+        public string voiceAudioFile;
     }
 
     private class Act

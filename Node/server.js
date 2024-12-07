@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
@@ -45,7 +46,13 @@ app.get('/make-choice', (req, res) => {
     }
 });
 
-app.get('/image', (req, res) => res.sendFile(path.join(imagesFolder, req.query.file)));
-app.get('/audio', (req, res) => res.sendFile(path.join(audiosFolder, req.query.file)));
+app.get('/image', (req, res) => {
+    console.log(chalk.blue(`image ${req.query.file}`));
+    res.sendFile(path.join(imagesFolder, req.query.file));
+});
+app.get('/audio', (req, res) => {
+    console.log(chalk.blue(`audio ${req.query.file}`));
+    res.sendFile(path.join(audiosFolder, req.query.file))
+});
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

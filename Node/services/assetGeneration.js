@@ -1,5 +1,5 @@
-import OpenAI from 'openai';
 import chalk from 'chalk';
+import OpenAI from 'openai';
 import axios from 'axios';
 import path from 'path';
 import { fileURLToPath } from 'url';
