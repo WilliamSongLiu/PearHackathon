@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import apiKeys from '../apiKeys.json' with { type: 'json' };
 import { storySchema, actSchema } from '../schemas.js';
 import { zodResponseFormat } from 'openai/helpers/zod';
-import { setup_plot_system_prompt, generate_scene_system_prompt, summarize_scene_system_prompt } from '../prompts.js';
+import { setup_plot_system_prompt, generate_act_system_prompt, summarize_act_system_prompt } from '../prompts.js';
 import { generateImage, generateVoice } from './assetGeneration.js';
 
 const openai = new OpenAI({ apiKey: apiKeys.openai });
@@ -47,11 +47,21 @@ export const generateAct = async (choiceIndex) => {
         choicesMade.push(lastChoices[choiceIndex]);
     }
 
-    const prompt = `Act ${n_act}: Generate a scene based on previous acts and setup.`;
+    let prompt;
+    if (choiceIndex == -1) {
+        prompt = `This is the first act in the story. Begin the story.`;
+    }
+    else {
+        prompt = `This is act ${n_act} in the story. Here's what happened in prior acts.\n`;
+        for (let i = 0; i < sceneSummaries.length; i++) {
+            prompt += `${i + 1}.\nSummary: ${sceneSummaries[i]}\nPlayer's choice: ${choicesMade[i]}\n`;
+        }
+    }
+
     const completion = await openai.beta.chat.completions.parse({
         model: model,
         messages: [
-            { role: 'system', content: generate_scene_system_prompt },
+            { role: 'system', content: generate_act_system_prompt },
             { role: 'user', content: prompt },
         ],
         response_format: zodResponseFormat(actSchema, 'actOverview'),
@@ -91,7 +101,7 @@ const summarizeScene = async (sceneJson) => {
     return await openai.chat.completions.create({
         model: model,
         messages: [
-            { role: 'system', content: summarize_scene_system_prompt },
+            { role: 'system', content: summarize_act_system_prompt },
             { role: 'user', content: prompt },
         ],
     });

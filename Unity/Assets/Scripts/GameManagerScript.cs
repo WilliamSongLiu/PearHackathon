@@ -6,235 +6,214 @@ using TMPro;
 [RequireComponent(typeof(AudioSource))]
 public class GameManagerScript : MonoBehaviour
 {
-	public static GameManagerScript Instance { get; private set; }
-	private void Awake()
-	{
-		if (Instance == null)
-		{
-			Instance = this;
-		} else
-		{
-			Destroy(gameObject);
-		}
-	}
-
-	AudioSource audioSource;
-
-	[SerializeField] Image backgroundImage;
-	[SerializeField] GameObject bottomPanel;
-	[SerializeField] TMP_Text speakerText;
-	[SerializeField] TMP_Text lineText;
-	[SerializeField] GameObject clickInterceptorPanel;
-	[SerializeField] GameObject choicePanel;
-	[SerializeField] GameObject loadingPanel;
-	[SerializeField] TMP_Text loadingText;
-
-	[SerializeField] GameObject choicePrefab;
-
-	enum State
-	{
-		StorySetup,
-		GeneratingAct,
-		PlayingJustStarted,
-		PlayingWaitingForAudio,
-		PlayingAnimating,
-		PlayingDoneAnimating,
-		Choice
-	}
-	State state;
-
-	[System.Serializable]
-	class Dialogue
-	{
-		public string speaker;
-		public string line;
-	}
-	class Act
-	{
-		public string backgroundImageFile;
-		public Dialogue[] dialogues;
-		public string[] choices;
-	}
-	Act currentAct;
-	int currentDialogueIndex;
-	int currentDialogueCharacterIndex;
-
-	float textInterval = 0.03f;
-	float lastTextUpdate;
-
-	private void Start()
+    public static GameManagerScript Instance { get; private set; }
+    private void Awake()
     {
-		audioSource = GetComponent<AudioSource>();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
-		loadingText.text = "Building the world...";
-		loadingPanel.SetActive(true);
+    private AudioSource audioSource;
 
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private GameObject bottomPanel;
+    [SerializeField] private TMP_Text speakerText;
+    [SerializeField] private TMP_Text lineText;
+    [SerializeField] private GameObject clickInterceptorPanel;
+    [SerializeField] private GameObject choicePanel;
+    [SerializeField] private GameObject loadingPanel;
+    [SerializeField] private TMP_Text loadingText;
+    [SerializeField] private GameObject choicePrefab;
+
+    private enum State
+    {
+        StorySetup,
+        GeneratingAct,
+        Playing,
+        Choice
+    }
+    private State state;
+
+    [System.Serializable]
+    private class Dialogue
+    {
+        public string speaker;
+        public string line;
+        public string voiceAudioFile; // Pre-generated audio file
+    }
+
+    private class Act
+    {
+        public string backgroundImageFile;
+        public Dialogue[] dialogues;
+        public string[] choices;
+    }
+
+    private Act currentAct;
+    private int currentDialogueIndex;
+    private int currentDialogueCharacterIndex;
+    private float textInterval = 0.03f;
+    private float lastTextUpdate;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        loadingText.text = "Building the world...";
+        loadingPanel.SetActive(true);
         SetupStory();
-	}
+    }
 
-	void SetupStory()
-	{
-		state = State.StorySetup;
+    private void SetupStory()
+    {
+        state = State.StorySetup;
+        StartCoroutine(NetworkManagerScript.Instance.RequestJSON(
+            $"/setup-story?genre={DataManager.genre}&playerName={DataManager.playerName}", SetupStoryReceived));
+    }
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestJSON(
-			$"/setup-story?genre={DataManager.genre}&playerName={DataManager.playerName}", SetupStoryReceived));
-	}
-	class SetupStoryResponse
-	{
-		public bool success;
-	}
-	void SetupStoryReceived(string response)
-	{
-		SetupStoryResponse json = JsonUtility.FromJson<SetupStoryResponse>(response);
-		if (!json.success)
-		{
-			Debug.LogError("Error: !json.success");
-			return;
-		}
+    [System.Serializable]
+    private class SetupStoryResponse
+    {
+        public bool success;
+    }
 
-		loadingText.text = "Generating the story...";
+    private void SetupStoryReceived(string response)
+    {
+        SetupStoryResponse json = JsonUtility.FromJson<SetupStoryResponse>(response);
+        if (!json.success)
+        {
+            Debug.LogError("Error: Story setup failed.");
+            return;
+        }
 
-		GenerateAct(-1);
-	}
+        loadingText.text = "Generating the story...";
+        GenerateAct(-1);
+    }
 
-	void GenerateAct(int choiceIndex)
-	{
-		loadingText.text = "Loading next act...";
-		loadingPanel.SetActive(true);
+    private void GenerateAct(int choiceIndex)
+    {
+        loadingText.text = "Loading next act...";
+        loadingPanel.SetActive(true);
+        state = State.GeneratingAct;
+        StartCoroutine(NetworkManagerScript.Instance.RequestJSON(
+            $"/generate-act?choiceIndex={choiceIndex}", GenerateActReceived));
+    }
 
-		state = State.GeneratingAct;
+    private void GenerateActReceived(string response)
+    {
+        currentAct = JsonUtility.FromJson<Act>(response);
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?choiceIndex={choiceIndex}", GenerateActReceived));
-	}
-	void GenerateActReceived(string response)
-	{
-		currentAct = JsonUtility.FromJson<Act>(response);
+        // Load background image
+        StartCoroutine(NetworkManagerScript.Instance.RequestImage(currentAct.backgroundImageFile, sprite =>
+        {
+            backgroundImage.sprite = sprite;
+            StartPlayingAct();
+        }));
+    }
 
-		loadingText.text = "Loading...";
+    private void StartPlayingAct()
+    {
+        loadingPanel.SetActive(false);
+        bottomPanel.SetActive(false);
+        clickInterceptorPanel.SetActive(false);
+        choicePanel.SetActive(false);
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestImage(currentAct.backgroundImageFile, BackgroundImageReceived));
-	}
-	void BackgroundImageReceived(Sprite sprite)
-	{
-		backgroundImage.sprite = sprite;
-		
-		state = State.PlayingJustStarted;
-	}
+        currentDialogueIndex = 0;
+        state = State.Playing;
 
-	private void Update()
-	{
-		if (state == State.PlayingJustStarted)
-		{
-			loadingPanel.SetActive(false);
-			bottomPanel.SetActive(false);
-			clickInterceptorPanel.SetActive(false);
-			choicePanel.SetActive(false);
+        PlayDialogue();
+    }
 
-			state = State.PlayingWaitingForAudio;
-			currentDialogueIndex = 0;
+    private void Update()
+    {
+        if (state == State.Playing && Time.time - lastTextUpdate >= textInterval)
+        {
+            if (currentDialogueCharacterIndex < currentAct.dialogues[currentDialogueIndex].line.Length)
+            {
+                currentDialogueCharacterIndex++;
+                lineText.text = currentAct.dialogues[currentDialogueIndex].line.Substring(0, currentDialogueCharacterIndex);
+                lastTextUpdate = Time.time;
+            }
+        }
+    }
 
-			GenerateVoice();
-		}
-		else if (state == State.PlayingAnimating)
-		{
-			if (Time.time - lastTextUpdate >= textInterval)
-			{
-				currentDialogueCharacterIndex++;
-				lineText.text = currentAct.dialogues[currentDialogueIndex].line.Substring(0, currentDialogueCharacterIndex);
+    private void PlayDialogue()
+    {
+        if (currentDialogueIndex >= currentAct.dialogues.Length)
+        {
+            ShowChoices();
+            return;
+        }
 
-				if (currentDialogueCharacterIndex >= currentAct.dialogues[currentDialogueIndex].line.Length)
-				{
-					state = State.PlayingDoneAnimating;
-				}
+        var dialogue = currentAct.dialogues[currentDialogueIndex];
+        speakerText.text = dialogue.speaker;
+        lineText.text = "";
+        currentDialogueCharacterIndex = 0;
+        lastTextUpdate = Time.time;
 
-				lastTextUpdate = Time.time;
-			}
-		}
-	}
+        if (!string.IsNullOrEmpty(dialogue.voiceAudioFile))
+        {
+            StartCoroutine(NetworkManagerScript.Instance.RequestAudio(dialogue.voiceAudioFile, audioClip =>
+            {
+                audioSource.Stop();
+                audioSource.PlayOneShot(audioClip);
 
-	void GenerateVoice()
-	{
-		StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-voice?speaker={currentAct.dialogues[currentDialogueIndex].speaker}&line={currentAct.dialogues[currentDialogueIndex].line}", GenerateVoiceReceived));
-	}
-	class GenerateVoiceResponse
-	{
-		public bool success;
-		public string voiceAudioFile;
-	}
-	void GenerateVoiceReceived(string response)
-	{
-		GenerateVoiceResponse json = JsonUtility.FromJson<GenerateVoiceResponse>(response);
-		if (!json.success)
-		{
-			Debug.LogError("Error: !json.success");
-			return;
-		}
+                bottomPanel.SetActive(true);
+                clickInterceptorPanel.SetActive(true);
+            }));
+        }
+        else
+        {
+            bottomPanel.SetActive(true);
+            clickInterceptorPanel.SetActive(true);
+        }
+    }
 
-		StartCoroutine(NetworkManagerScript.Instance.RequestAudio(json.voiceAudioFile, VoiceReceived));
-	}
-	void VoiceReceived(AudioClip audioClip)
-	{
-		audioSource.Stop();
-		audioSource.PlayOneShot(audioClip);
+    public void ClickInterceptorClicked()
+    {
+        if (currentDialogueCharacterIndex < currentAct.dialogues[currentDialogueIndex].line.Length)
+        {
+            // Skip to the end of the dialogue
+            lineText.text = currentAct.dialogues[currentDialogueIndex].line;
+            currentDialogueCharacterIndex = currentAct.dialogues[currentDialogueIndex].line.Length;
+            audioSource.Stop();
+        }
+        else
+        {
+            // Proceed to the next dialogue
+            currentDialogueIndex++;
+            PlayDialogue();
+        }
+    }
 
-		bottomPanel.SetActive(true);
-		clickInterceptorPanel.SetActive(true);
+    private void ShowChoices()
+    {
+        bottomPanel.SetActive(false);
+        clickInterceptorPanel.SetActive(false);
+        choicePanel.SetActive(true);
 
-		state = State.PlayingAnimating;
-		currentDialogueCharacterIndex = 0;
-		lastTextUpdate = 0f;
+        foreach (Transform child in choicePanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
 
-		speakerText.text = currentAct.dialogues[currentDialogueIndex].speaker;
-		lineText.text = "";
-	}
+        for (int i = 0; i < currentAct.choices.Length; i++)
+        {
+            GameObject choiceInstance = Instantiate(choicePrefab, choicePanel.transform);
+            ChoiceScript choiceScript = choiceInstance.GetComponent<ChoiceScript>();
+            choiceScript.Init(i, currentAct.choices[i]);
+        }
 
-	public void ClickInterceptorClicked()
-	{
-		if (state == State.PlayingAnimating)
-		{
-			state = State.PlayingDoneAnimating;
-			lineText.text = currentAct.dialogues[currentDialogueIndex].line;
+        state = State.Choice;
+    }
 
-			audioSource.Stop();
-		}
-		else if (state == State.PlayingDoneAnimating)
-		{
-			currentDialogueIndex++;
-			if (currentDialogueIndex >= currentAct.dialogues.Length)
-			{
-				bottomPanel.SetActive(false);
-				clickInterceptorPanel.SetActive(false);
-				choicePanel.SetActive(true);
-
-				foreach (Transform child in choicePanel.transform)
-				{
-					Destroy(child.gameObject);
-				}
-
-				for (int i = 0; i < currentAct.choices.Length; i++)
-				{
-					GameObject choiceInstance = Instantiate(choicePrefab, choicePanel.transform);
-					ChoiceScript choiceScript = choiceInstance.GetComponent<ChoiceScript>();
-					choiceScript.Init(i, currentAct.choices[i]);
-				}
-
-				state = State.Choice;
-
-			}
-			else
-			{
-				bottomPanel.SetActive(false);
-				clickInterceptorPanel.SetActive(false);
-
-				state = State.PlayingWaitingForAudio;
-
-				GenerateVoice();
-			}
-		}
-	}
-
-	public void ClickChoice(int index)
-	{
-		GenerateAct(index);
-	}
+    public void ClickChoice(int index)
+    {
+        GenerateAct(index);
+    }
 }

@@ -40,27 +40,27 @@ Provide the output in a structured paragraph format, with clearly delineated sec
 - Consider including unique aspects or twists that make the plot engaging and original.
 - Side characters should have distinct roles that complement or contrast with the main character's journey.`;
 
-export const generate_scene_system_prompt = `Create a scene for a visual novel using the given background information, characters list, and prior scenes if provided.
+export const generate_act_system_prompt = `Create an act for a visual novel using the given background information, characters list, and prior acts and player choices if provided.
 
 Include a major event that introduces signficant plot development and information about at least one character and / or the fictional world that the story takes place in.
 
 You will be supplied with:
 - Background about the story
 - A list of characters
-- Any prior scenes in the story, if available
+- Any prior acts and player choices in the story, if available
 - A significant decision to be made by the end of the story
 - A progress indicator showing proximity to the end
 
 **Output Requirements:**
-- List of characters in the scene.
-- A detailed visual description of the scene's setting
-- Dialogue sequence labeled with the speaker, who should be a character in the scene or the narrator
-- Present a decision the main character needs to make at scene's end, with two choices to pick from
+- List of characters in the act
+- A detailed visual description of the act's setting
+- Dialogue sequence labeled with the speaker, who should be a character in the act or the narrator
+- Present a decision the main character needs to make at act's end, with 2-4 choices to pick from
 
 # Steps
-1. **Review Background:** Understand the background story, characters, and previous scenes if provided.
-2. **Scene Setting:**
-   - List the characters involved in the scene.
+1. **Review Background:** Understand the background story, characters, and previous acts if provided.
+2. **Act Setting:**
+   - List the characters involved in the act.
    - Provide a vivid description of the setting, focusing on visuals that aid imagination in a visual novel context.
 3. **Dialogue Creation:**
    - Write a sequence of dialogue ensuring each line is attributed to the correct speaker.
@@ -71,7 +71,7 @@ You will be supplied with:
 
 # Output Format
 - List of characters: [Character Name 1, Character Name 2, ...]
-- Scene description: [Visual and atmospheric details in a paragraph format]
+- Act description: [Visual and atmospheric details in a paragraph format]
 - Dialogue: [Sequential format with labeled speakers]
 - Decision: [A statement of the decision and two choices in a concise bullet point format]
 
@@ -79,7 +79,7 @@ You will be supplied with:
 
 **Example Input:**
 - Characters: [Character A, Character B]
-- Scene Setting: An abandoned library filled with dusty books and shadowy corners.
+- Act Setting: An abandoned library filled with dusty books and shadowy corners.
 - Dialogue:
   - Character A: "Do you think we'll find any answers here?"
   - Character B: "I hope so. We've been searching for so long."
@@ -89,7 +89,6 @@ You will be supplied with:
 
 DO NOT include parentheses in the output.
 Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.`;
-
 
 export const physical_description_system_prompt = `Create a detailed physical appearance description for a character based on the provided character description.
 
@@ -117,24 +116,24 @@ The paragraph should be limited to 400 characters to ensure concise yet descript
 - The inferred traits should logically follow from the character's description and context.
 - The description should be vivid enough to allow a mental image of the character.`;
 
-export const summarize_scene_system_prompt = `Summarize a scene from a visual novel, focusing on significant plot points, character interactions, and thematic elements.
+export const summarize_act_system_prompt = `Summarize an act from a visual novel, focusing on significant plot points, character interactions, and thematic elements.
 
 # Steps
 
-1. **Scene Identification**: Determine which scene from the visual novel is to be summarized.
-2. **Plot Significance**: Identify and describe any significant plot developments within the scene.
+1. **Act Identification**: Determine which act from the visual novel is to be summarized.
+2. **Plot Significance**: Identify and describe any significant plot developments within the act.
 3. **Character Interactions**: Highlight key interactions and dialogues among characters that influence character development or the story's progression.
-4. **Thematic Elements**: Note any themes or motifs present in the scene and their relevance to the overall narrative.
+4. **Thematic Elements**: Note any themes or motifs present in the act and their relevance to the overall narrative.
 5. **Conclusion**: Provide a brief wrap-up that integrates the plot points, character interactions, and themes mentioned.
 
 # Output Format
 
-Provide a concise paragraph summarizing the scene, ensuring all significant plot elements, character interactions, and thematic elements are included.
+Provide a concise paragraph summarizing the act, ensuring all significant plot elements, character interactions, and thematic elements are included.
 
 # Examples
 
 **Input:**
-Scene: [Scene Description]
+Act: [Act Description]
 
 **Output:**
-In this scene, [describe significant plot developments]. The interactions between [character names] reveal [specific character traits or developments]. Themes of [themes] are evident as [explanation of theme presence and its relevance]. Overall, this scene [concluding thoughts on the scene’s importance or effect on the story].`;
+In this act, [describe significant plot developments]. The interactions between [character names] reveal [specific character traits or developments]. Themes of [themes] are evident as [explanation of theme presence and its relevance]. Overall, this act [concluding thoughts on the act's importance or effect on the story].`;
