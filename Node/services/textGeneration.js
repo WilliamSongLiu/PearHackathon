@@ -72,7 +72,7 @@ export const generateAct = async (choiceIndex) => {
     const completion = await openai.beta.chat.completions.parse({
         model: model,
         messages: messages,
-        response_format: zodResponseFormat(actSchema, 'actOverview'),
+        response_format: zodResponseFormat(actSchema, 'actOverview')
     });
 
     const act = completion.choices[0].message.parsed;
@@ -84,7 +84,7 @@ export const generateAct = async (choiceIndex) => {
     // Generate voice files for each dialogue line
     const voiceFiles = [];
     for (const line of act.dialogue) {
-        const voiceFileName = await generateVoice(line.line, line.speaker);
+        const voiceFileName = await generateVoice(line.speaker, line.line);
         voiceFiles.push({ speaker: line.speaker, file: voiceFileName });
     }
     act.voiceFiles = voiceFiles;

@@ -42,7 +42,7 @@ export const generateImage = async (prompt) => {
 };
 
 export const generateVoice = async (speaker, line) => {
-    console.log(chalk.blue("generateImage"));
+    console.log(chalk.blue("generateVoice"));
     console.log(line);
 
     if (!(speaker in speakerVoices)) {
