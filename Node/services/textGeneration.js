@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import chalk from 'chalk';
 import apiKeys from '../apiKeys.json' with { type: 'json' };
 import { storySchema, actSchema } from '../schemas.js';
 import { zodResponseFormat } from 'openai/helpers/zod';
@@ -16,7 +17,7 @@ let lastChoices = [];
 let sceneSummaryPromise = null;
 
 export const setupStory = async (genre, playerName) => {
-    console.log("setupStory");
+    console.log(chalk.blue("setupStory"));
 
     n_act = 1;
     storySetup = {};
@@ -24,13 +25,16 @@ export const setupStory = async (genre, playerName) => {
     choicesMade = [];
     sceneSummaryPromise = null;
 
-    const prompt = `Generate a plot for a 5-minute ${genre || 'pumpkin'} visual novel. The main character is named ${playerName || 'Pooja'}.`;
+    const prompt = `Generate a plot for a super short ${genre || 'pumpkin'} visual novel. The main character is named ${playerName || 'Pooja'}.`;
+    const messages = [
+        { role: 'system', content: setup_plot_system_prompt },
+        { role: 'user', content: prompt },
+    ];
+    console.log(messages);
+
     const completion = await openai.beta.chat.completions.parse({
         model: model,
-        messages: [
-            { role: 'system', content: setup_plot_system_prompt },
-            { role: 'user', content: prompt },
-        ],
+        messages: messages,
         response_format: zodResponseFormat(storySchema, 'storySetup'),
     });
 
@@ -39,7 +43,7 @@ export const setupStory = async (genre, playerName) => {
 };
 
 export const generateAct = async (choiceIndex) => {
-    console.log("generateAct");
+    console.log(chalk.blue("generateAct"));
 
     if (sceneSummaryPromise !== null) {
         const sceneSummary = await sceneSummaryPromise;
@@ -58,12 +62,15 @@ export const generateAct = async (choiceIndex) => {
         }
     }
 
+    const messages = [
+        { role: 'system', content: generate_act_system_prompt },
+        { role: 'user', content: prompt },
+    ];
+    console.log(messages);
+
     const completion = await openai.beta.chat.completions.parse({
         model: model,
-        messages: [
-            { role: 'system', content: generate_act_system_prompt },
-            { role: 'user', content: prompt },
-        ],
+        messages: messages,
         response_format: zodResponseFormat(actSchema, 'actOverview'),
     });
 
@@ -89,20 +96,23 @@ export const generateAct = async (choiceIndex) => {
 };
 
 export const makeChoice = (choice) => {
-    console.log("makeChoice");
+    console.log(chalk.blue("makeChoice"));
 
     choicesMade.push(choice);
 }
 
 const summarizeScene = async (sceneJson) => {
-    console.log("summarizeScene");
+    console.log(chalk.blue("summarizeScene"));
 
     const prompt = `Summarize this scene: ${JSON.stringify(sceneJson)}`;
+    const messages = [
+        { role: 'system', content: summarize_act_system_prompt },
+        { role: 'user', content: prompt },
+    ];
+    console.log(messages);
+
     return await openai.chat.completions.create({
         model: model,
-        messages: [
-            { role: 'system', content: summarize_act_system_prompt },
-            { role: 'user', content: prompt },
-        ],
+        messages: messages,
     });
 };
