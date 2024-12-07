@@ -55,7 +55,7 @@ You will be supplied with:
 - List of characters in the act
 - A detailed visual description of the act's setting
 - Dialogue sequence labeled with the speaker, who should be a character in the act or the narrator
-- Present a decision the main character needs to make at act's end, with 2-4 choices to pick from
+- Present a decision the main character needs to make at act's end, with 2 to 4 choices to pick from
 
 # Steps
 1. **Review Background:** Understand the background story, characters, and previous acts if provided.
@@ -67,25 +67,25 @@ You will be supplied with:
    - Maintain consistency with character traits and the overarching story theme.
 4. **Decision Point:**
    - Present a decision to be made by the main character.
-   - Offer two distinct choices that align with the story's progress and character development.
+   - Offer 2 to 4 distinct choices that lead the story in drastically different directions.
 
 # Output Format
 - List of characters: [Character Name 1, Character Name 2, ...]
 - Act description: [Visual and atmospheric details in a paragraph format]
 - Dialogue: [Sequential format with labeled speakers]
-- Decision: [A statement of the decision and two choices in a concise bullet point format]
+- Decision: [A statement of the decision and 2 to 4 choices]
 
 # Examples
 
 **Example Input:**
-- Characters: [Character A, Character B]
+- Characters: [Main Character, Character A, Character B]
 - Act Setting: An abandoned library filled with dusty books and shadowy corners.
 - Dialogue:
-  - Character A: "Do you think we'll find any answers here?"
-  - Character B: "I hope so. We've been searching for so long."
-- Decision: "Character A must decide whether to confront their fears or continue searching."
-  - Choice 1: Confront fears and enter the darkest area of the library.
-  - Choice 2: Keep searching the safer, well-lit parts.
+  - Character A: "No, stop! I promise I didn't do it!"
+  - Character B: "You filthy rat! I'm going to end you right now."
+- Decision: "Main Character must decide whether they should intervene."
+  - Choice 1: Intervene
+  - Choice 2: Stay silent
 
 DO NOT include parentheses in the output.
 Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.`;
