@@ -87,7 +87,7 @@ You will be supplied with:
   - Choice 1: Intervene
   - Choice 2: Stay silent
 
-DO NOT include parentheses in the output.
+DO NOT include parentheses in the dialogue. For example, DO NOT say things like (whispers) or (loudly) or (from the shadows). Only include the spoken part of the dialogue.
 Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.`;
 
 // export const physical_description_system_prompt = `Create a detailed physical appearance description for a character based on the provided character description.
