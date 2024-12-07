@@ -90,31 +90,31 @@ You will be supplied with:
 DO NOT include parentheses in the output.
 Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.`;
 
-export const physical_description_system_prompt = `Create a detailed physical appearance description for a character based on the provided character description.
+// export const physical_description_system_prompt = `Create a detailed physical appearance description for a character based on the provided character description.
 
-# Steps
+// # Steps
 
-1. **Analyze the Description**: Carefully read the given character description to understand key traits, personality, and any available physical attributes.
-2. **Identify Key Physical Traits**: Extract any explicit physical characteristics mentioned (e.g. height, hair color, eye color).
-3. **Infer Additional Attributes**: Based on the character's personality and role, infer additional physical traits that may suit them (e.g. posture, clothing style).
-4. **Comprehensive Description**: Combine explicit traits and inferred details to compose a coherent and vivid description of the character's physical appearance.
+// 1. **Analyze the Description**: Carefully read the given character description to understand key traits, personality, and any available physical attributes.
+// 2. **Identify Key Physical Traits**: Extract any explicit physical characteristics mentioned (e.g. height, hair color, eye color).
+// 3. **Infer Additional Attributes**: Based on the character's personality and role, infer additional physical traits that may suit them (e.g. posture, clothing style).
+// 4. **Comprehensive Description**: Combine explicit traits and inferred details to compose a coherent and vivid description of the character's physical appearance.
 
-# Output Format
+// # Output Format
 
-The output should be a single, detailed paragraph describing the character's physical appearance, incorporating both explicit information and inferred traits where relevant.
-The paragraph should be limited to 400 characters to ensure concise yet descriptive content.
+// The output should be a single, detailed paragraph describing the character's physical appearance, incorporating both explicit information and inferred traits where relevant.
+// The paragraph should be limited to 400 characters to ensure concise yet descriptive content.
 
-# Examples
+// # Examples
 
-**Input**: "A mysterious, scholarly wizard with an air of intrigue."
+// **Input**: "A mysterious, scholarly wizard with an air of intrigue."
 
-**Output**: "The wizard stands tall and lean, with a mane of silver hair that cascades down his shoulders, framing a face marked by sharply defined features. His eyes, a piercing blue, seem to hold countless mysteries and wisdom beyond his years. His skin is pale, adding to his ethereal appearance, and a long, dark robe embroidered with arcane symbols drapes elegantly from his shoulders, giving him a regal presence. In one hand, he clutches an ancient staff, while the other frequently reaches to adjust the round spectacles perched on his nose, a testament to his scholarly nature."
+// **Output**: "The wizard stands tall and lean, with a mane of silver hair that cascades down his shoulders, framing a face marked by sharply defined features. His eyes, a piercing blue, seem to hold countless mysteries and wisdom beyond his years. His skin is pale, adding to his ethereal appearance, and a long, dark robe embroidered with arcane symbols drapes elegantly from his shoulders, giving him a regal presence. In one hand, he clutches an ancient staff, while the other frequently reaches to adjust the round spectacles perched on his nose, a testament to his scholarly nature."
 
-**Notes**
+// **Notes**
 
-- Ensure creativity while maintaining coherence in the description.
-- The inferred traits should logically follow from the character's description and context.
-- The description should be vivid enough to allow a mental image of the character.`;
+// - Ensure creativity while maintaining coherence in the description.
+// - The inferred traits should logically follow from the character's description and context.
+// - The description should be vivid enough to allow a mental image of the character.`;
 
 export const summarize_act_system_prompt = `Summarize an act from a visual novel, focusing on significant plot points, character interactions, and thematic elements.
 

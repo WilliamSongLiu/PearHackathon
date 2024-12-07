@@ -9,7 +9,7 @@ import { generateImage, generateVoice } from './assetGeneration.js';
 const openai = new OpenAI({ apiKey: apiKeys.openai });
 const model = 'gpt-4o-mini';
 
-let n_act = 1;
+let actIndex = 0;
 let storySetup = {};
 let sceneSummaries = [];
 let choicesMade = [];
@@ -19,7 +19,7 @@ let sceneSummaryPromise = null;
 export const setupStory = async (genre, playerName) => {
     console.log(chalk.blue("setupStory"));
 
-    n_act = 1;
+    actIndex = 0;
     storySetup = {};
     sceneSummaries = [];
     choicesMade = [];
@@ -51,12 +51,14 @@ export const generateAct = async (choiceIndex) => {
         choicesMade.push(lastChoices[choiceIndex]);
     }
 
+    actIndex++;
+
     let prompt;
     if (choiceIndex == -1) {
         prompt = `This is the first act in the story. Begin the story.`;
     }
     else {
-        prompt = `This is act ${n_act} in the story. Here's what happened in prior acts.\n`;
+        prompt = `This is act ${actIndex} in the story. Here's what happened in prior acts.\n`;
         for (let i = 0; i < sceneSummaries.length; i++) {
             prompt += `${i + 1}.\nSummary: ${sceneSummaries[i]}\nPlayer's choice: ${choicesMade[i]}\n`;
         }
@@ -74,11 +76,10 @@ export const generateAct = async (choiceIndex) => {
         response_format: zodResponseFormat(actSchema, 'actOverview'),
     });
 
-    n_act++;
     const act = completion.choices[0].message.parsed;
 
     // Generate image for the act
-    const imageFileName = await generateImage(`Scene from Act ${n_act}: ${act.setting}`);
+    const imageFileName = await generateImage(act.setting);
     act.imageFile = imageFileName;
 
     // Generate voice files for each dialogue line

@@ -2,12 +2,14 @@ import OpenAI from 'openai';
 import chalk from 'chalk';
 import axios from 'axios';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import apiKeys from '../apiKeys.json' with { type: 'json' };
 
 const openai = new OpenAI({ apiKey: apiKeys.openai });
 
-const __dirname = path.dirname(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const imagesFolder = path.join(__dirname, '../images');
 const audiosFolder = path.join(__dirname, '../audios');
 
