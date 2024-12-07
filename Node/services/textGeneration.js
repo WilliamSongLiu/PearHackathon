@@ -30,7 +30,7 @@ export const setupStory = async (genre, playerName) => {
         { role: 'system', content: setup_plot_system_prompt },
         { role: 'user', content: prompt },
     ];
-    console.log(messages);
+    console.log(prompt);
 
     const completion = await openai.beta.chat.completions.parse({
         model: model,
@@ -63,12 +63,11 @@ export const generateAct = async (choiceIndex) => {
             prompt += `${i + 1}.\nSummary: ${sceneSummaries[i]}\nPlayer's choice: ${choicesMade[i]}\n`;
         }
     }
-
     const messages = [
         { role: 'system', content: generate_act_system_prompt },
         { role: 'user', content: prompt },
     ];
-    console.log(messages);
+    console.log(prompt);
 
     const completion = await openai.beta.chat.completions.parse({
         model: model,
@@ -110,10 +109,10 @@ const summarizeScene = async (sceneJson) => {
         { role: 'system', content: summarize_act_system_prompt },
         { role: 'user', content: prompt },
     ];
-    console.log(messages);
+    console.log(prompt);
 
     return await openai.chat.completions.create({
         model: model,
-        messages: messages,
+        messages: messages
     });
 };
