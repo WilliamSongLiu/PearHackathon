@@ -31,5 +31,5 @@ export const actSchema = z.object({
             line: z.string(),
         })
     ),
-    choices: z.array(z.string()),
+    choice: z.array(z.string()),
 });

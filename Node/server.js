@@ -28,7 +28,7 @@ app.get('/setup-story', async (req, res) => {
 
 app.get('/generate-act', async (req, res) => {
     try {
-        const act = await generateAct(req.query.choiceIndex);
+        const act = await generateAct(req.query.optionIndex);
         res.json(act);
     } catch (error) {
         console.error(error);

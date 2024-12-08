@@ -55,25 +55,25 @@ You will be supplied with:
 - List of characters in the act
 - A detailed visual description of the act's setting
 - Dialogue sequence labeled with the speaker, who should be a character in the act or the narrator
-- Present a decision the main character needs to make at act's end, with 2 to 4 choices to pick from
+- Present a decision the main character needs to make at act's end, with 2 to 4 options to pick from
 
 # Steps
 1. **Review Background:** Understand the background story, characters, and previous acts if provided.
 2. **Act Setting:**
    - List the characters involved in the act.
    - Provide a vivid description of the setting, focusing on visuals that aid imagination in a visual novel context.
-3. **Dialogue Creation:**
+3. **Dialogue:**
    - Write a sequence of dialogue ensuring each line is attributed to the correct speaker.
    - Maintain consistency with character traits and the overarching story theme.
-4. **Decision Point:**
+4. **Choice:**
    - Present a decision to be made by the main character.
-   - Offer 2 to 4 distinct choices that lead the story in drastically different directions.
+   - Offer 2 to 4 distinct options that lead the story in drastically different directions.
 
 # Output Format
 - List of characters: [Character Name 1, Character Name 2, ...]
 - Act description: [Visual and atmospheric details in a paragraph format]
 - Dialogue: [Sequential format with labeled speakers]
-- Decision: [A statement of the decision and 2 to 4 choices]
+- Choice: [A statement of the decision and 2 to 4 options]
 
 # Examples
 
@@ -83,9 +83,9 @@ You will be supplied with:
 - Dialogue:
   - Character A: "No, stop! I promise I didn't do it!"
   - Character B: "You filthy rat! I'm going to end you right now."
-- Decision: "Main Character must decide whether they should intervene."
-  - Choice 1: Intervene
-  - Choice 2: Stay silent
+- Choice:
+  - Option 1: Intervene
+  - Option 2: Stay silent
 
 DO NOT include parentheses in the dialogue. For example, DO NOT say things like (whispers) or (loudly) or (from the shadows). Only include the spoken part of the dialogue.
 Real examples should include more detailed settings and dialogue reflecting the characters' personalities and relationships.`;

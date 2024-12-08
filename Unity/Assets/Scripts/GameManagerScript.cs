@@ -52,7 +52,7 @@ public class GameManagerScript : MonoBehaviour
         public string[] characters;
         public string setting;
         public Dialogue[] dialogues;
-        public string[] choices;
+        public string[] choice;
         public string backgroundImageFile;
     }
 
@@ -81,12 +81,12 @@ public class GameManagerScript : MonoBehaviour
             }));
     }
 
-    private void GenerateAct(int choiceIndex)
+    private void GenerateAct(int optionIndex)
     {
         loadingText.text = "Loading next act...";
         loadingPanel.SetActive(true);
         state = State.GeneratingAct;
-        StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?choiceIndex={choiceIndex}",
+        StartCoroutine(NetworkManagerScript.Instance.RequestJSON($"/generate-act?optionIndex={optionIndex}",
             response =>
             {
                 currentAct = JsonUtility.FromJson<Act>(response);
@@ -116,7 +116,7 @@ public class GameManagerScript : MonoBehaviour
     {
         if (currentDialogueIndex >= currentAct.dialogues.Length)
         {
-            ShowChoices();
+            ShowChoice();
             return;
         }
 
@@ -174,7 +174,7 @@ public class GameManagerScript : MonoBehaviour
         }
     }
 
-    private void ShowChoices()
+    private void ShowChoice()
     {
         bottomPanel.SetActive(false);
         clickInterceptorPanel.SetActive(false);
@@ -185,11 +185,11 @@ public class GameManagerScript : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        for (int i = 0; i < currentAct.choices.Length; i++)
+        for (int i = 0; i < currentAct.choice.Length; i++)
         {
             GameObject choiceInstance = Instantiate(choicePrefab, choicePanel.transform);
             ChoiceScript choiceScript = choiceInstance.GetComponent<ChoiceScript>();
-            choiceScript.Init(i, currentAct.choices[i]);
+            choiceScript.Init(i, currentAct.choice[i]);
         }
 
         state = State.Choice;
