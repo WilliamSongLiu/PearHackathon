@@ -54,7 +54,7 @@ export const generateAct = async (choiceIndex) => {
     actIndex++;
 
     let prompt;
-    if (choiceIndex == -1) {
+    if (actIndex == 1) {
         prompt = `This is the first act in the story. Begin the story.`;
     }
     else {
