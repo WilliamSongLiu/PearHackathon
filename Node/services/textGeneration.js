@@ -55,7 +55,7 @@ export const generateAct = async (choiceIndex) => {
 
     actIndex++;
 
-    let prompt = `Here's the setup of the story:\n${storySetup}\n\n`;
+    let prompt = `Here's the setup of the story:\n${JSON.stringify(storySetup, null, 2)}\n\n`;
     if (actIndex == 1) {
         prompt += `This is the first act in the story. Begin the story.`;
     }
