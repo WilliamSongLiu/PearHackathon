@@ -36,16 +36,6 @@ app.get('/generate-act', async (req, res) => {
     }
 });
 
-app.get('/make-choice', (req, res) => {
-    try {
-        makeChoice(req.query.choice);
-        res.json({});
-    } catch (error) {
-        console.error(error);
-        res.status(500);
-    }
-});
-
 app.get('/image', (req, res) => {
     console.log(chalk.blue(`image ${req.query.file}`));
     res.sendFile(path.join(imagesFolder, req.query.file));

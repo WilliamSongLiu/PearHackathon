@@ -94,12 +94,6 @@ export const generateAct = async (choiceIndex) => {
     return act;
 };
 
-export const makeChoice = (choice) => {
-    console.log(chalk.blue("makeChoice"));
-
-    choicesMade.push(choice);
-}
-
 const summarizeScene = async (dialogues) => {
     console.log(chalk.blue("summarizeScene"));
 
