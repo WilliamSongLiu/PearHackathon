@@ -57,10 +57,10 @@ export const generateAct = async (choiceIndex) => {
 
     let prompt = `Here's the setup of the story:\n${storySetup}\n\n`;
     if (actIndex == 1) {
-        prompt = `This is the first act in the story. Begin the story.`;
+        prompt += `This is the first act in the story. Begin the story.`;
     }
     else {
-        prompt = `This is act ${actIndex} in the story. Here's what happened in prior acts.\n`;
+        prompt += `This is act ${actIndex} in the story. Here's what happened in prior acts.\n`;
         for (let i = 0; i < sceneSummaries.length; i++) {
             prompt += `${i + 1}.\nSummary: ${sceneSummaries[i]}\nPlayer's choice: ${choicesMade[i]}\n`;
         }
