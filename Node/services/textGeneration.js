@@ -40,7 +40,7 @@ export const setupStory = async (genre, playerName) => {
 
     storySetup = completion.choices[0].message.parsed;
 
-    console.log(chalk.blue("setupStory"));
+    console.log(chalk.yellow("setupStory"));
     console.log(storySetup);
 };
 
