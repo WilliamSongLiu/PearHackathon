@@ -39,7 +39,9 @@ export const setupStory = async (genre, playerName) => {
     });
 
     storySetup = completion.choices[0].message.parsed;
-    return storySetup;
+
+    console.log(chalk.blue("setupStory"));
+    console.log(storySetup);
 };
 
 export const generateAct = async (choiceIndex) => {
@@ -53,7 +55,7 @@ export const generateAct = async (choiceIndex) => {
 
     actIndex++;
 
-    let prompt;
+    let prompt = `Here's the setup of the story:\n${storySetup}\n\n`;
     if (actIndex == 1) {
         prompt = `This is the first act in the story. Begin the story.`;
     }

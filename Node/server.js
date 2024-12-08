@@ -18,8 +18,8 @@ if (!fs.existsSync(audiosFolder)) fs.mkdirSync(audiosFolder);
 
 app.get('/setup-story', async (req, res) => {
     try {
-        const response = await setupStory(req.query.genre, req.query.playerName);
-        res.json(response);
+        await setupStory(req.query.genre, req.query.playerName);
+        res.json({});
     } catch (error) {
         console.error(error);
         res.status(500);
