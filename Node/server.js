@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { setupStory, generateAct, makeChoice } from './services/textGeneration.js';
+import { setupStory, generateAct } from './services/textGeneration.js';
 
 const app = express();
 const PORT = 3000;
