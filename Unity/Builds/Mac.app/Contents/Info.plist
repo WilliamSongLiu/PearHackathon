@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>Unity</string>
     <key>CFBundleGetInfoString</key>
-    <string>Unity Player version 2022.3.50f1 (c3db7f8bf9b1). (c) 2005-2024 Unity Technologies. All rights reserved.</string>
+    <string>Unity Player version 2022.3.33f1 (b2c853adf198). (c) 2005-2024 Unity Technologies. All rights reserved.</string>
     <key>CFBundleIconFile</key>
     <string>PlayerIcon.icns</string>
     <key>CFBundleIdentifier</key>
@@ -40,6 +40,6 @@
     <key>NSPrincipalClass</key>
     <string>PlayerApplication</string>
     <key>UnityBuildNumber</key>
-    <string>c3db7f8bf9b1</string>
+    <string>b2c853adf198</string>
   </dict>
 </plist>
